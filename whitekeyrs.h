@@ -2,6 +2,7 @@
 #define WHITEKEYRS_H
 
 #include "model.h"
+#include "lodepng.h"
 
 namespace Models {
 	namespace WhiteKeyRSInternal {
@@ -14,6 +15,7 @@ namespace Models {
 	}
 
 	class WhiteKeyRS: public Model {
+		GLuint tex;
 		public:
 			WhiteKeyRS();
 			virtual ~WhiteKeyRS();

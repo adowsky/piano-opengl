@@ -10,10 +10,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
+#include <stdio.h>
+
 
 class Piano{
     Models::PianoBox pianobox;
     Models::PianoCover pianocover;
+    Models::BlackKey bkey;
+    Models::WhiteKeyBS keybs;
+    Models::WhiteKeyRS keyrs;
     bool isOpening;
     float openAngle;
     const float maxAngle = 2.0f/3*PI;

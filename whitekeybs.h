@@ -2,6 +2,7 @@
 #define WHITEKEYBS_H
 
 #include "model.h"
+#include "lodepng.h"
 
 namespace Models {
 	namespace WhiteKeyBSInternal {
@@ -14,6 +15,7 @@ namespace Models {
 	}
 
 	class WhiteKeyBS: public Model {
+			GLuint tex;
 		public:
 			WhiteKeyBS();
 			virtual ~WhiteKeyBS();

@@ -22,6 +22,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "constants.h"
 
@@ -35,7 +36,7 @@ namespace Models {
 			float *vertexNormals;
 			float *texCoords;
 			float *colors;
-					
+
 			virtual void drawSolid()=0;
 			virtual void drawWire();
 	};

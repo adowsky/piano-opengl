@@ -6,7 +6,7 @@ Piano::Piano(){
 }
 
 Piano::~Piano(){
-
+    printf("Piano destroyed\n" );
 }
 
 void Piano::drawObject(glm::mat4 V, glm::mat4 M){
@@ -34,9 +34,6 @@ void Piano::close(){
     isOpening = false;
 }
 void Piano::drawOctaves(glm::mat4 V, glm::mat4 M, int count){
-    Models::WhiteKeyBS keybs;
-    Models::WhiteKeyRS keyrs;
-    Models::BlackKey bkey;
     glm::mat4 M2 = M;
     glColor3d(1, 0, 0);
     for(int i=0; i<count;i++){

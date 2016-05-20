@@ -16,7 +16,6 @@ namespace Models {
     }
     void Platform::drawSolid(){
         glEnable(GL_NORMALIZE);
-
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);

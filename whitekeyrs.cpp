@@ -13,30 +13,45 @@ namespace Models {
         texCoords = WhiteKeyRSInternal::texCoords;
         colors = WhiteKeyRSInternal::colors;
         vertexCount = WhiteKeyRSInternal::vertexCount;
+
+        std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
+        unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
+        //Wczytaj obrazek
+        unsigned error = lodepng::decode(image, width, height, "whiteKeyLayer.png");
+        //Import do pamięci karty graficznej
+        glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
+        glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
     }
     WhiteKeyRS::~WhiteKeyRS(){
-
+        glDeleteTextures(1,&tex);
     }
 
     void WhiteKeyRS::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
 
         glEnable(GL_NORMALIZE);
-
+        glBindTexture(GL_TEXTURE_2D,tex);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glVertexPointer(4,GL_FLOAT,0,vertices);
 		glColorPointer(4,GL_FLOAT,0,colors);
 		glNormalPointer(GL_FLOAT,sizeof(float)*4,vertexNormals);
-		//glTexCoordPointer(2,GL_FLOAT,0,texCoords);
+		glTexCoordPointer(2,GL_FLOAT,0,texCoords);
+
 
 		glDrawArrays(GL_TRIANGLES,0,vertexCount);
-
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     namespace WhiteKeyRSInternal{
@@ -370,35 +385,85 @@ namespace Models {
 
 			float texCoords[]={//TODO to refactor
                 //góra cienka
-                0,height, 0,height, 2.0f/3*width,height,
-                2.0f/3*width, 0,height, 2.0f/3*width,height,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
+
                 //góra szeroka
-                0,height, 0,height, width,height,
-                width,height, 0,height, width,height,
+                0.0f,1.0f,
+                0.0f,0.0f,
+                1.0f,1.0f,
+                1.0f,0.0f,
+                0.0f,0.0f,
+                1.0f,1.0f,
+
                 //lewa sciana
-                0,0.0f, 0,0, 0,height,
-                0,height, 0,0, 0,height,
+                0.0f,0,
+                0,1,
+            1,0,
+                1,1,
+                0,1,
+                1,0,
+
                 //tylna ściana cienka
-                0,0, 0,height, 2.0f/3*width,
-                2.0f/3*width,height, 0,height, 2.0f/3*width,0.0f,
+                0,0,
+                0,1,
+                1,0.0f,
+
+                1,1,
+                0,1,
+                1,0.0f,
+
+
                 //tylna prawa szeroka
-                2.0f/3*width,0, 2.0f/3*width,height, width,0.0f,
-                width,height, 2.0f/3*width,height, width,0.0f,
+                0,0,
+                0,1,
+                1,0.0f,
+
+                1,1,
+                0,1,
+                1,0.0f,
                 //prawy bok cienki
-                2.0f/3*width, 2.0f/3*width,0, 2.0f/3*width,height,
-                2.0f/3*width,height, 2.0f/3*width,0, 2.0f/3*width,height,
+                0.0f,0,
+                0,1,
+                1,0,
+
+                1,1,
+                0,1,
+                1,0,
+
                 //prawy bok szeroki
-                width,0.0f, width,0, width,height,
-                width,height, width,0, width,height,
+                0.0f,0,
+                0,1,
+                1,0,
+
+                1,1,
+                0,1,
+                1,0,
+
                 //dolny bok cienki
-                0,0, 0,0, 2.0f/3*width,0,
-                2.0f/3*width,0, 0,0, 2.0f/3*width,0,
+                0,1,
+                0,0,
+                1,1,
+                1,0,
+                0,0,
+                1,1,
+
                 //dolny bok szeroki
-                0,0, 0,0, width,0,
-                width,0, 0,0, width,0,
+                0,1,
+                0,0,
+                1,1,
+                1,0,
+                0,0,
+                1,1,
+
                 //przednia ściana
-                0,0, 0,height, width,0.0f,
-                width,height, 0,height, width,0.0f,
+                0,0,
+                0,1,
+                1,0.0f,
+
+                1,1,
+                0,1,
+                1,0.0f,
 			};
     }
 
