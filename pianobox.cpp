@@ -28,9 +28,16 @@ namespace Models {
         //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
         glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
          GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
-    }
+        //Making VBO
+        bufVertices = makeBuffer(vertices, vertexCount, sizeof(float)*4);
+        bufNormals = makeBuffer(normals, vertexCount, sizeof(float)*4);
+        bufColors = makeBuffer(colors, vertexCount, sizeof(float)*4);
+            }
     PianoBox::~PianoBox(){
         glDeleteTextures(1,&tex);
+        glDeleteBuffers(1,&bufVertices);
+        glDeleteBuffers(1,&bufNormals);
+        glDeleteBuffers(1,&bufColors);
     }
 
     void PianoBox::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
