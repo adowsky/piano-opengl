@@ -3,6 +3,7 @@
 
 
 #include "model.h"
+#include <stdio.h>
 
 namespace Models {
 	namespace PlatformInternal {

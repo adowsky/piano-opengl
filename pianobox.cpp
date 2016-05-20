@@ -11,43 +11,46 @@ namespace Models {
         texCoords = PianoBoxInternal::texCoords;
         colors = PianoBoxInternal::colors;
         vertexCount = PianoBoxInternal::vertexCount;
+
+        std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
+        unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
+        //Wczytaj obrazek
+        unsigned error = lodepng::decode(image, width, height, "wood.png");
+        if(error != 0)
+        printf("error\n");
+        //Import do pamięci karty graficznej
+        glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
+        glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+         GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
     }
     PianoBox::~PianoBox(){
-
+        glDeleteTextures(1,&tex);
     }
-    void PianoBox::wall() {
 
-	}
     void PianoBox::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
 
         glEnable(GL_NORMALIZE);
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glEnableClientState(GL_NORMAL_ARRAY);
-		//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(4,GL_FLOAT,0,vertices);
-		glColorPointer(4,GL_FLOAT,0,colors);
-		glNormalPointer(GL_FLOAT,sizeof(float)*4,vertexNormals);
-		//glTexCoordPointer(2,GL_FLOAT,0,texCoords);
-/*
-        float Am[4] = {0.1f,0.1f,0.1f,1};
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, Am );*/
-/*
-        float Dm[4] = {0.9f, 0.5f, 0.5f, 1.0f };
-        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, Dm );
-
-        float Sm[4] = {0.6f, 0.6f, 0.6f, 1.0f };
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, Sm );
-        float f = 60.0f;
-        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, f );
-*/
-		glDrawArrays(GL_TRIANGLES,0,vertexCount);
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,tex);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY); //Włącz używanie tablicy wierzchołków
+        glEnableClientState(GL_COLOR_ARRAY); //Włącz używanie tablicy kolorów
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glVertexPointer(4, GL_FLOAT, 0, vertices); //Wskaż tablicę wierzchołków
+        glNormalPointer(GL_FLOAT,sizeof(float)*4,vertexNormals);
+        glColorPointer(4, GL_FLOAT, 0, colors); //Wskaż tablicę kolorów
+        glTexCoordPointer( 2, GL_FLOAT, 0, texCoords);
+        glDrawArrays(GL_TRIANGLES, 0, 72); //Wykonaj rysowanie
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY); //Wyłącz używanie tablicy wierzchołków
+    glDisableClientState(GL_COLOR_ARRAY); //Wyłącz używanie tablicy kolorów
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     namespace PianoBoxInternal{
@@ -147,94 +150,94 @@ namespace Models {
         };
         float colors[]={//TODO to refactor
                 //nieruchliwa góra
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //lewa sciana
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //tylna ściana
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //prawy bok
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //dolny bok
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //przednia ściana
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //prawy bok klawiszy
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //lewy bok klawiszy
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //dół klawiszy
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
         //front klawiszy
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
-        0.196f,0.121f,0.004f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
+        0.82f,0.74f,0.65f,1.0f,
 			};
             float normals[]={//TODO to refactor
 				0.0f, 0.0f,-1.0f,0.0f,
@@ -379,23 +382,44 @@ namespace Models {
 			};
 
 			float texCoords[]={//TODO to refactor
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //nieruchliwa góra
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                0.0f,1.0f, 1.0f,0.0f, 1.0f,1.0f,
 
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //lewa sciana
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,0.0f,
+                0.0f,1.0f, 1.0f,1.0f, 0.0f,0.0f,
 
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //tylna ściana
+                0.0f,1.0f, 1.0f,1.0f, 0.0f,0.0f,
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,0.0f,
 
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //prawy bok
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,0.0f,
+                0.0f,1.0f, 1.0f,1.0f, 0.0f,0.0f,
 
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //dolny bok
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
+                //przednia ściana
+                0.0f,1.0f, 1.0f,1.0f, 0.0f,0.0f,
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,0.0f,
 
-				1.0f,1.0f, 0.0f,0.0f, 0.0f,1.0f,
-				1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
+                //prawy bok klawiszy
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 0.0f,1.0f,
+
+                //lewy bok klawiszy
+                1.0f,0.0f, 1.0f,1.0f, 0.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 0.0f,1.0f,
+
+                //dół klawiszy
+                0.0f,1.0f, 1.0f,1.0f, 1.0f,0.0f,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,0.0f,
+
+                //front klawiszy
+                0.0f,1.0f, 1.0f,1.0f, 1.0f,0.0f,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,0.0f,
 			};
     }
 

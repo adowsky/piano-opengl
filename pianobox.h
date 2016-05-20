@@ -2,6 +2,10 @@
 #define PIANOBOX_H
 
 #include "model.h"
+#include "lodepng.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 
 namespace Models {
 	namespace PianoBoxInternal {
@@ -14,7 +18,7 @@ namespace Models {
 	}
 
 	class PianoBox: public Model {
-		void wall();
+			GLuint tex;
 		public:
 			PianoBox();
 			virtual ~PianoBox();
