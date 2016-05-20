@@ -33,7 +33,7 @@ namespace Models {
         glDeleteTextures(1,&tex);
     }
 
-    void WhiteKeyRS::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
+    void WhiteKeyRS::drawSolid(){
 
         glEnable(GL_NORMALIZE);
         glBindTexture(GL_TEXTURE_2D,tex);
@@ -152,7 +152,7 @@ namespace Models {
         0,height,lenght,1.0f,
         width,0.0f,lenght,1.0f,
         };
-        float colors[]={//TODO to refactor
+        float colors[]={
             //góra wąska
             1,1,1,1.0f,
             1,1,1,1.0f,
@@ -240,57 +240,101 @@ namespace Models {
             1,1,1,1.0f,
             1,1,1,1.0f,
 			};
-            float normals[]={//TODO to refactor
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
+            float normals[]={
+                //góra cienka
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
 
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
 
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
+                //góra szeroka
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
 
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
+                0.0f,1.0f,0.0f,0.0f,
 
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
+                //lewa sciana
+                -1.0f,0.0f,0.0f,0.0f,
+                -1.0f,0.0f,0.0f,0.0f,
+                -1.0f,0.0f,0.0f,0.0f,
 
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
+                -1.0f,0.0f,0.0f,0.0f,
+                -1.0f,0.0f,0.0f,0.0f,
+                -1.0f,0.0f,0.0f,0.0f,
 
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
 
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
+                //tylna ściana cienka
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
 
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
 
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
 
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
+                //tylna prawa szeroka
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
 
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+                0.0f,0.0f,-1.0f,0.0f,
+
+                //prawy bok cienki
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+
+                //prawy bok szeroki
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+                1.0f,0.0f,0.0f,0.0f,
+
+                //dolny bok cienki
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+
+                //dolny bok szeroki
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+                0.0f,-1.0f,0.0f,0.0f,
+
+                //przednia ściana
+                0.0f,0.0f,1.0f,0.0f,
+                0.0f,0.0f,1.0f,0.0f,
+                0.0f,0.0f,1.0f,0.0f,
+
+                0.0f,0.0f,1.0f,0.0f,
+                0.0f,0.0f,1.0f,0.0f,
+                0.0f,0.0f,1.0f,0.0f,
 			};
 
-			float vertexNormals[]={//TODO to refactor
+			float vertexNormals[]={
                 //góra cienka
                 0,height,3.0f/5*lenght,1.0f,
                 0,height,0,1.0f,
@@ -383,87 +427,49 @@ namespace Models {
                 width,0.0f,lenght,1.0f,
 			};
 
-			float texCoords[]={//TODO to refactor
-                //góra cienka
+			float texCoords[]={
                 0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
                 1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
 
                 //góra szeroka
-                0.0f,1.0f,
-                0.0f,0.0f,
-                1.0f,1.0f,
-                1.0f,0.0f,
-                0.0f,0.0f,
-                1.0f,1.0f,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
 
                 //lewa sciana
-                0.0f,0,
-                0,1,
-            1,0,
-                1,1,
-                0,1,
-                1,0,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
                 //tylna ściana cienka
-                0,0,
-                0,1,
-                1,0.0f,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
-                1,1,
-                0,1,
-                1,0.0f,
-
+                //tylna lewa szeroka
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
                 //tylna prawa szeroka
-                0,0,
-                0,1,
-                1,0.0f,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
-                1,1,
-                0,1,
-                1,0.0f,
                 //prawy bok cienki
-                0.0f,0,
-                0,1,
-                1,0,
-
-                1,1,
-                0,1,
-                1,0,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
                 //prawy bok szeroki
-                0.0f,0,
-                0,1,
-                1,0,
-
-                1,1,
-                0,1,
-                1,0,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 
                 //dolny bok cienki
-                0,1,
-                0,0,
-                1,1,
-                1,0,
-                0,0,
-                1,1,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
 
                 //dolny bok szeroki
-                0,1,
-                0,0,
-                1,1,
-                1,0,
-                0,0,
-                1,1,
+                0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
+                1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
 
                 //przednia ściana
-                0,0,
-                0,1,
-                1,0.0f,
-
-                1,1,
-                0,1,
-                1,0.0f,
+                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
+                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 			};
     }
 

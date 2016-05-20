@@ -33,7 +33,7 @@ namespace Models {
         glDeleteTextures(1,&tex);
     }
 
-    void PianoBox::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
+    void PianoBox::drawSolid(){
 
         glEnable(GL_NORMALIZE);
         glEnable(GL_TEXTURE_2D);
@@ -148,7 +148,7 @@ namespace Models {
         0.723f,-0.15f,0.27f,1.0f,
 
         };
-        float colors[]={//TODO to refactor
+        float colors[]={
                 //nieruchliwa góra
         0.82f,0.74f,0.65f,1.0f,
         0.82f,0.74f,0.65f,1.0f,
@@ -239,57 +239,97 @@ namespace Models {
         0.82f,0.74f,0.65f,1.0f,
         0.82f,0.74f,0.65f,1.0f,
 			};
-            float normals[]={//TODO to refactor
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
+            float normals[]={
+                //nieruchliwa góra
+        0.0f,1.0f,0.0f,0.0f,
+        0.0f,1.0f,0.0f,0.0f,
+        0.0f,1.0f,0.0f,0.0f,
 
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
-				0.0f, 0.0f,-1.0f,0.0f,
+        0.0f,1.0f,0.0f,0.0f,
+        0.0f,1.0f,0.0f,0.0f,
+        0.0f,1.0f,0.0f,0.0f,
 
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
+        //lewa sciana
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
 
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
-				0.0f, 0.0f, 1.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
 
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
+        //tylna ściana
+        0.0f,0.0f,-1.0f,0.0f,
+        0.0f,0.0f,-1.0f,0.0f,
+        0.0f,0.0f,-1.0f,0.0f,
 
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
-				1.0f, 0.0f, 0.0f,0.0f,
+        0.0f,0.0f,-1.0f,0.0f,
+        0.0f,0.0f,-1.0f,0.0f,
+        0.0f,0.0f,-1.0f,0.0f,
 
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
+        //prawy bok
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
 
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
-				-1.0f, 0.0f, 0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        //dolny bok
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
 
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
 
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
-				0.0f,-1.0f, 0.0f,0.0f,
+        //przednia ściana
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
 
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
 
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
-				0.0f, 1.0f, 0.0f,0.0f,
+        //prawy bok klawiszy
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+        1.0f,0.0f,0.0f,0.0f,
+
+        //lewy bok klawiszy
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        -1.0f,0.0f,0.0f,0.0f,
+        //dół klawiszy
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+        0.0f,-1.0f,0.0f,0.0f,
+
+        //front klawiszy
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
+        0.0f,0.0f,1.0f,0.0f,
 			};
 
-			float vertexNormals[]={//TODO to refactor
+			float vertexNormals[]={
                 //nieruchliwa góra
                 -0.723f,0.602f,-0.275f,1.0f,
                 -0.723f,0.602f,-0.1375f,1.0f,
@@ -381,7 +421,7 @@ namespace Models {
                 0.723f,-0.15f,0.27f,1.0f
 			};
 
-			float texCoords[]={//TODO to refactor
+			float texCoords[]={
                 //nieruchliwa góra
                 0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
                 0.0f,1.0f, 1.0f,0.0f, 1.0f,1.0f,

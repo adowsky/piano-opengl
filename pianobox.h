@@ -19,6 +19,9 @@ namespace Models {
 
 	class PianoBox: public Model {
 			GLuint tex;
+			GLint bufVertices;
+			GLint bufColors;
+			GLint bufNormals;
 		public:
 			PianoBox();
 			virtual ~PianoBox();
