@@ -1,18 +1,18 @@
-#include "whitekeybs.h"
+#include "whitekeyrs.h"
 
 
 
 namespace Models {
 
-    WhiteKeyBS whitekeybs;
+    WhiteKeyRS whitekeyrs;
 
-    WhiteKeyBS::WhiteKeyBS(){
-        vertices = WhiteKeyBSInternal::vertices;
-        normals = WhiteKeyBSInternal::normals;
-        vertexNormals = WhiteKeyBSInternal::vertexNormals;
-        texCoords = WhiteKeyBSInternal::texCoords;
-        colors = WhiteKeyBSInternal::colors;
-        vertexCount = WhiteKeyBSInternal::vertexCount;
+    WhiteKeyRS::WhiteKeyRS(){
+    /*    vertices = WhiteKeyRSInternal::vertices;
+        normals = WhiteKeyRSInternal::normals;
+        vertexNormals = WhiteKeyRSInternal::vertexNormals;
+        texCoords = WhiteKeyRSInternal::texCoords;
+        colors = WhiteKeyRSInternal::colors;
+        vertexCount = WhiteKeyRSInternal::vertexCount;
 
         std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
         unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
@@ -27,16 +27,16 @@ namespace Models {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
         glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+        GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());*/
     }
-    WhiteKeyBS::~WhiteKeyBS(){
-        glDeleteTextures(1,&tex);
+    WhiteKeyRS::~WhiteKeyRS(){
+        //glDeleteTextures(1,&tex);
     }
-
-    void WhiteKeyBS::drawSolid(){
-
+    void WhiteKeyRS::init(){}
+    void WhiteKeyRS::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
+/*
         glEnable(GL_NORMALIZE);
-
+        glBindTexture(GL_TEXTURE_2D,tex);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
@@ -46,28 +46,28 @@ namespace Models {
 		glNormalPointer(GL_FLOAT,sizeof(float)*4,vertexNormals);
 		glTexCoordPointer(2,GL_FLOAT,0,texCoords);
 
-		glDrawArrays(GL_TRIANGLES,0,vertexCount);
 
+		glDrawArrays(GL_TRIANGLES,0,vertexCount);
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
     }
 
-    namespace WhiteKeyBSInternal{
-        unsigned int vertexCount = 72;
+    namespace WhiteKeyRSInternal{
+        unsigned int vertexCount = 60;
         float lenght = 0.26f;
         float height = 0.1f;
         float width = 0.022f;
 
         float vertices[] = {
         //góra cienka
-        1.0f/3*width,height,3.0f/5*lenght,1.0f,
-        1.0f/3*width,height,0,1.0f,
+        0,height,3.0f/5*lenght,1.0f,
+        0,height,0,1.0f,
         2.0f/3*width,height,3.0f/5*lenght,1.0f,
 
         2.0f/3*width,height,0,1.0f,
-        1.0f/3*width,height,0,1.0f,
+        0,height,0,1.0f,
         2.0f/3*width,height,3.0f/5*lenght,1.0f,
 
         //góra szeroka
@@ -79,41 +79,24 @@ namespace Models {
         0,height,3.0f/5*lenght,1.0f,
         width,height,lenght,1.0f,
 
-        //lewa sciana cienka
-        1.0f/3*width,0.0f,0,1.0f,
-        1.0f/3*width,0,3.0f/5*lenght,1.0f,
-        1.0f/3*width,height,0,1.0f,
-
-        1.0f/3*width,height,3.0f/5*lenght,1.0f,
-        1.0f/3*width,0,3.0f/5*lenght,1.0f,
-        1.0f/3*width,height,0,1.0f,
-
-        //lewa ściana szeroka
-        0,0.0f,3.0f/5*lenght,1.0f,
+        //lewa sciana
+        0,0.0f,0,1.0f,
         0,0,lenght,1.0f,
-        0,height,3.0f/5*lenght,1.0f,
+        0,height,0,1.0f,
 
         0,height,lenght,1.0f,
         0,0,lenght,1.0f,
-        0,height,3.0f/5*lenght,1.0f,
+        0,height,0,1.0f,
 
         //tylna ściana cienka
-        1.0f/3*width,0,0,1.0f,
-        1.0f/3*width,height,0,1.0f,
+        0,0,0,1.0f,
+        0,height,0,1.0f,
         2.0f/3*width,0.0f,0,1.0f,
 
         2.0f/3*width,height,0,1.0f,
-        1.0f/3*width,height,0,1.0f,
+        0,height,0,1.0f,
         2.0f/3*width,0.0f,0,1.0f,
 
-        //tylna lewa szeroka
-        0,0,3.0f/5*lenght,1.0f,
-        0,height,3.0f/5*lenght,1.0f,
-        1.0f/3*width,0.0f,3.0f/5*lenght,1.0f,
-
-        1.0f/3*width,height,3.0f/5*lenght,1.0f,
-        0,height,3.0f/5*lenght,1.0f,
-        1.0f/3*width,0.0f,3.0f/5*lenght,1.0f,
 
         //tylna prawa szeroka
         2.0f/3*width,0,3.0f/5*lenght,1.0f,
@@ -143,12 +126,12 @@ namespace Models {
         width,height,3.0f/5*lenght,1.0f,
 
         //dolny bok cienki
-        1.0f/3*width,0,3.0f/5*lenght,1.0f,
-        1.0f/3*width,0,0,1.0f,
+        0,0,3.0f/5*lenght,1.0f,
+        0,0,0,1.0f,
         2.0f/3*width,0,3.0f/5*lenght,1.0f,
 
         2.0f/3*width,0,0,1.0f,
-        1.0f/3*width,0,0,1.0f,
+        0,0,0,1.0f,
         2.0f/3*width,0,3.0f/5*lenght,1.0f,
 
         //dolny bok szeroki
@@ -195,14 +178,6 @@ namespace Models {
             1,1,1,1.0f,
             1,1,1,1.0f,
             1,1,1,1.0f,
-            //lewa ściana szeroka
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-            1,1,1,1.0f,
 
             //tylna ściana wąska
             1,1,1,1.0f,
@@ -213,14 +188,6 @@ namespace Models {
             1,1,1,1.0f,
             1,1,1,1.0f,
 
-            //tylna ściana szeroka lewa
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-
-            1,1,1,1.0f,
-            1,1,1,1.0f,
-            1,1,1,1.0f,
             //tylna ściana szeroka prawa
             1,1,1,1.0f,
             1,1,1,1.0f,
@@ -292,7 +259,7 @@ namespace Models {
                 0.0f,1.0f,0.0f,0.0f,
                 0.0f,1.0f,0.0f,0.0f,
 
-                //lewa sciana cienka
+                //lewa sciana
                 -1.0f,0.0f,0.0f,0.0f,
                 -1.0f,0.0f,0.0f,0.0f,
                 -1.0f,0.0f,0.0f,0.0f,
@@ -301,14 +268,6 @@ namespace Models {
                 -1.0f,0.0f,0.0f,0.0f,
                 -1.0f,0.0f,0.0f,0.0f,
 
-                //lewa ściana szeroka
-                -1.0f,0.0f,0.0f,0.0f,
-                -1.0f,0.0f,0.0f,0.0f,
-                -1.0f,0.0f,0.0f,0.0f,
-
-                -1.0f,0.0f,0.0f,0.0f,
-                -1.0f,0.0f,0.0f,0.0f,
-                -1.0f,0.0f,0.0f,0.0f,
 
                 //tylna ściana cienka
                 0.0f,0.0f,-1.0f,0.0f,
@@ -319,14 +278,6 @@ namespace Models {
                 0.0f,0.0f,-1.0f,0.0f,
                 0.0f,0.0f,-1.0f,0.0f,
 
-                //tylna lewa szeroka
-                0.0f,0.0f,-1.0f,0.0f,
-                0.0f,0.0f,-1.0f,0.0f,
-                0.0f,0.0f,-1.0f,0.0f,
-
-                0.0f,0.0f,-1.0f,0.0f,
-                0.0f,0.0f,-1.0f,0.0f,
-                0.0f,0.0f,-1.0f,0.0f,
 
                 //tylna prawa szeroka
                 0.0f,0.0f,-1.0f,0.0f,
@@ -385,12 +336,12 @@ namespace Models {
 
 			float vertexNormals[]={
                 //góra cienka
-                1.0f/3*width,height,3.0f/5*lenght,1.0f,
-                1.0f/3*width,height,0,1.0f,
-                2.0f/3*width,height,3.0f/5*lenght,1.0f,
+                0,height,3.0f/5*lenght,1.0f,
+                0,height,0,1.0f,
+                0,height,3.0f/5*lenght,1.0f,
 
                 2.0f/3*width,height,0,1.0f,
-                1.0f/3*width,height,0,1.0f,
+                0,height,0,1.0f,
                 2.0f/3*width,height,3.0f/5*lenght,1.0f,
 
                 //góra szeroka
@@ -402,50 +353,33 @@ namespace Models {
                 0,height,3.0f/5*lenght,1.0f,
                 width,height,lenght,1.0f,
 
-                //lewa sciana cienka
-                1.0f/3*width,0.0f,0,1.0f,
-                1.0f/3*width,0,3.0f/5*lenght,1.0f,
-                1.0f/3*width,height,0,1.0f,
-
-                1.0f/3*width,height,3.0f/5*lenght,1.0f,
-                1.0f/3*width,0,3.0f/5*lenght,1.0f,
-                1.0f/3*width,height,0,1.0f,
-
-                //lewa ściana szeroka
-                0,0.0f,3.0f/5*lenght,1.0f,
+                //lewa sciana
+                0,0.0f,0,1.0f,
                 0,0,lenght,1.0f,
-                0,height,3.0f/5*lenght,1.0f,
+                0,height,0,1.0f,
 
                 0,height,lenght,1.0f,
                 0,0,lenght,1.0f,
-                0,height,3.0f/5*lenght,1.0f,
+                0,height,0,1.0f,
 
                 //tylna ściana cienka
-                1.0f/3*width,0,0,1.0f,
-                1.0f/3*width,height,0,1.0f,
-                2.0f/3*width,0.0f,0,1.0f,
-
-                2.0f/3*width,height,0,1.0f,
-                1.0f/3*width,height,0,1.0f,
-                2.0f/3*width,0.0f,0,1.0f,
-
-                //tylna lewa szeroka
                 0,0,0,1.0f,
                 0,height,0,1.0f,
-                1.0f/3*width,0.0f,0,1.0f,
+                2.0f/3*width,0.0f,0,1.0f,
 
-                1.0f/3*width,height,0,1.0f,
+                2.0f/3*width,height,0,1.0f,
                 0,height,0,1.0f,
-                1.0f/3*width,0.0f,0,1.0f,
+                2.0f/3*width,0.0f,0,1.0f,
+
 
                 //tylna prawa szeroka
-                2.0f/3*width,0,0,1.0f,
-                2.0f/3*width,height,0,1.0f,
-                width,0.0f,0,1.0f,
+                2.0f/3*width,0,3.0f/5*lenght,1.0f,
+                2.0f/3*width,height,3.0f/5*lenght,1.0f,
+                width,0.0f,3.0f/5*lenght,1.0f,
 
-                width,height,0,1.0f,
-                2.0f/3*width,height,0,1.0f,
-                width,0.0f,0,1.0f,
+                width,height,3.0f/5*lenght,1.0f,
+                2.0f/3*width,height,3.0f/5*lenght,1.0f,
+                width,0.0f,3.0f/5*lenght,1.0f,
 
                 //prawy bok cienki
                 2.0f/3*width,0.0f,0,1.0f,
@@ -466,12 +400,12 @@ namespace Models {
                 width,height,3.0f/5*lenght,1.0f,
 
                 //dolny bok cienki
-                1.0f/3*width,0,3.0f/5*lenght,1.0f,
-                1.0f/3*width,0,0,1.0f,
+                0,0,3.0f/5*lenght,1.0f,
+                0,0,0,1.0f,
                 2.0f/3*width,0,3.0f/5*lenght,1.0f,
 
                 2.0f/3*width,0,0,1.0f,
-                1.0f/3*width,0,0,1.0f,
+                0,0,0,1.0f,
                 2.0f/3*width,0,3.0f/5*lenght,1.0f,
 
                 //dolny bok szeroki
@@ -501,11 +435,7 @@ namespace Models {
                 0.0f,1.0f, 0.0f,0.0f, 1.0f,1.0f,
                 1.0f,0.0f, 0.0f,0.0f, 1.0f,1.0f,
 
-                //lewa sciana cienka
-                0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
-                1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
-
-                //lewa ściana szeroka
+                //lewa sciana
                 0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f,
                 1.0f,1.0f, 0.0f,1.0f, 1.0f,0.0f,
 

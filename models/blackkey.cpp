@@ -7,19 +7,22 @@ namespace Models {
     BlackKey blackkey;
 
     BlackKey::BlackKey(){
-        vertices = BlackKeyInternal::vertices;
+        /*vertices = BlackKeyInternal::vertices;
         normals = BlackKeyInternal::normals;
         vertexNormals = BlackKeyInternal::vertexNormals;
         texCoords = BlackKeyInternal::texCoords;
         colors = BlackKeyInternal::colors;
-        vertexCount = BlackKeyInternal::vertexCount;
+        vertexCount = BlackKeyInternal::vertexCount;*/
     }
     BlackKey::~BlackKey(){
 
     }
+    void BlackKey::init(){
+        
+    }
 
-    void BlackKey::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
-
+    void BlackKey::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
+/*
         glEnable(GL_NORMALIZE);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -36,7 +39,7 @@ namespace Models {
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
     }
 
     namespace BlackKeyInternal{

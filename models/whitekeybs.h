@@ -2,7 +2,7 @@
 #define WHITEKEYBS_H
 
 #include "model.h"
-#include "lodepng.h"
+#include "../lodepng.h"
 
 namespace Models {
 	namespace WhiteKeyBSInternal {
@@ -19,7 +19,8 @@ namespace Models {
 		public:
 			WhiteKeyBS();
 			virtual ~WhiteKeyBS();
-			virtual void drawSolid();
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM);
+			void init();
 	};
 
 	extern WhiteKeyBS whitekeybs;

@@ -22,23 +22,29 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <stdio.h>
 #include "constants.h"
+#include "shaderprogram.h"
 
 namespace Models {
 
 	class Model {
-		public:
-			int vertexCount;
-			float *vertices;
-			float *normals;
-			float *vertexNormals;
-			float *texCoords;
-			float *colors;
-
-			virtual void drawSolid()=0;
-			virtual void drawWire();
+	protected:
+	void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize);
+	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
+	public:
+			GLuint tex;
+			GLuint bufVertices;
+			GLuint bufColors;
+			GLuint bufNormals;
+			GLuint vao;
+			ShaderProgram *shaderProgram;
+			virtual void init()=0;
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM)=0;
 	};
 }
 

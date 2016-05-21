@@ -17,7 +17,8 @@ namespace Models {
 		public:
 			BlackKey();
 			virtual ~BlackKey();
-			virtual void drawSolid();
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM);
+			void init();
 	};
 
 	extern BlackKey blackkey;

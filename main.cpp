@@ -1,5 +1,4 @@
 #define GLM_FORCE_RADIANS
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <FTGL/ftgl.h>
@@ -8,21 +7,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
-#include "piano.h"
-#include "platform.h"
 #include <iostream>
-#include "whitekeyrs.h"
 #include "lodepng.h"
-
+#include "piano.h"
+#include "models/platform.h"
 using namespace std;
 
  float speed;
  float y_axis;
  float z_spd;
  Piano* piano;
- Models::Platform platform;
  FTGLPixmapFont font("opensans.ttf");
- GLuint tex;
+
 
 
 void key_callback(GLFWwindow* window, int key,
@@ -54,11 +50,12 @@ void error_callback(int error, const char* description) {
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
-    	glEnable(GL_LIGHTING); //Włącz tryb cieniowania
-    	glEnable(GL_LIGHT0); //Włącz domyslne światło
+    	// glEnable(GL_LIGHTING); //Włącz tryb cieniowania
+    	// glEnable(GL_LIGHT0); //Włącz domyslne światło
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
-    	glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
-    	glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+    	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
+    	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
     font.FaceSize(20);
 	piano = new Piano();
@@ -79,27 +76,15 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
 
 	glm::mat4 P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
-	//Załaduj macierz rzutowania do OpenGL
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(P));
-
-	//Przejdź w tryb pracy z macierzą Model-Widok
-	glMatrixMode(GL_MODELVIEW);
-	//Wylicz macierz obrotu o kąt angle wokół osi (0,1,1)
 	glm::mat4 M = glm::mat4(1.0f);
     M = glm::translate(M, glm::vec3(0.0f,-2.0f,z_pos));
     M = glm::rotate(M,y_axis,glm::vec3(1, 0, 0));
 	M = glm::rotate(M, angle, glm::vec3(0, 1, 0));
 
-	glLoadMatrixf(glm::value_ptr(V*M)); //Załaduj wyliczoną macierz do OpenGL
-
-    platform.drawSolid();
+//    platform.drawSolid();
     M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
+    piano->drawObject(P, V, M);
 
-    glLoadMatrixf(glm::value_ptr(V*M));
-	//glBindTexture(GL_TEXTURE_2D, tex);
-    piano->drawObject(V, M);
-	glDisable(GL_TEXTURE_2D);
     glTranslatef(0.0f,0.0f,-1.0f);
     string s = to_string(z_pos);
     font.Render(s.c_str());
@@ -122,7 +107,9 @@ int main(void)
 	}
 
 	window = glfwCreateWindow(500, 500, "Piano", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
-
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
 		glfwTerminate();

@@ -4,18 +4,19 @@ namespace Models {
     Platform platform;
 
     Platform::Platform(){
-        vertices = PlatformInternal::vertices;
+        /*vertices = PlatformInternal::vertices;
         normals = PlatformInternal::normals;
         vertexNormals = PlatformInternal::vertexNormals;
         texCoords = PlatformInternal::texCoords;
         colors = PlatformInternal::colors;
-        vertexCount = PlatformInternal::vertexCount;
+        vertexCount = PlatformInternal::vertexCount;*/
     }
     Platform::~Platform(){
 
     }
-    void Platform::drawSolid(){
-        glEnable(GL_NORMALIZE);
+    void Platform::init(){}
+    void Platform::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
+        /*glEnable(GL_NORMALIZE);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
@@ -31,7 +32,7 @@ namespace Models {
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
     }
 
     namespace PlatformInternal{

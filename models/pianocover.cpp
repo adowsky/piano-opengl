@@ -6,19 +6,16 @@ namespace Models {
     PianoCover pianocover;
 
     PianoCover::PianoCover(){
-        vertices = PianoCoverInternal::vertices;
-        normals = PianoCoverInternal::normals;
-        vertexNormals = PianoCoverInternal::vertexNormals;
-        texCoords = PianoCoverInternal::texCoords;
-        colors = PianoCoverInternal::colors;
-        vertexCount = PianoCoverInternal::vertexCount;
+
     }
     PianoCover::~PianoCover(){
 
     }
-
-    void PianoCover::drawSolid(){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
-
+    void PianoCover::init(){
+        
+    }
+    void PianoCover::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){ //TODO przekopiowane z Cube.cpp(sprawidzić czy wgl działa)
+/*
         glEnable(GL_NORMALIZE);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
@@ -33,7 +30,7 @@ namespace Models {
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
     }
 
     namespace PianoCoverInternal{

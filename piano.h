@@ -1,11 +1,11 @@
 #ifndef PIANO_H
 #define PIANO_H
 
-#include "pianobox.h"
-#include "pianocover.h"
-#include "whitekeyrs.h"
-#include "whitekeybs.h"
-#include "blackkey.h"
+#include "models/pianobox.h"
+#include "models/pianocover.h"
+#include "models/whitekeyrs.h"
+#include "models/whitekeybs.h"
+#include "models/blackkey.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,7 +26,7 @@ class Piano{
 public:
     Piano();
     virtual ~Piano();
-    virtual void drawObject(glm::mat4 V, glm::mat4 M);
+    virtual void drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM);
     float height();
     void open();
     void close();

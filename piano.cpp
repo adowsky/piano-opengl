@@ -3,15 +3,16 @@
 Piano::Piano(){
     isOpening = false;
     openAngle = 0.0f;
+    pianobox.init();
 }
 
 Piano::~Piano(){
     printf("Piano destroyed\n" );
 }
 
-void Piano::drawObject(glm::mat4 V, glm::mat4 M){
-    pianobox.drawSolid();
-    glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));
+void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
+    pianobox.drawModel(mP, mV, mM);
+    /*glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));
     if(isOpening && openAngle>-maxAngle)
         openAngle -= 0.7*glfwGetTime();
     else if(!isOpening &&openAngle<0)
@@ -22,7 +23,7 @@ void Piano::drawObject(glm::mat4 V, glm::mat4 M){
     pianocover.drawSolid();
     M2 = glm::translate(M, glm::vec3(-0.71f,0,0));
     drawOctaves(V, M2, 7);
-    glLoadMatrixf(glm::value_ptr(V*M));
+    glLoadMatrixf(glm::value_ptr(V*M));*/
 }
 float Piano::height(){
     return 1.446f;
@@ -34,7 +35,7 @@ void Piano::close(){
     isOpening = false;
 }
 void Piano::drawOctaves(glm::mat4 V, glm::mat4 M, int count){
-    glm::mat4 M2 = M;
+/*    glm::mat4 M2 = M;
     glColor3d(1, 0, 0);
     for(int i=0; i<count;i++){
         //C
@@ -93,6 +94,6 @@ void Piano::drawOctaves(glm::mat4 V, glm::mat4 M, int count){
         glLoadMatrixf(glm::value_ptr(V*M2));
         keyrs.drawSolid();
         M2 = glm::scale(M2, glm::vec3(-1,1,1));
-
-    }
+*/
+    //}
 }

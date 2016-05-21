@@ -2,7 +2,7 @@
 #define WHITEKEYRS_H
 
 #include "model.h"
-#include "lodepng.h"
+#include "../lodepng.h"
 
 namespace Models {
 	namespace WhiteKeyRSInternal {
@@ -15,11 +15,11 @@ namespace Models {
 	}
 
 	class WhiteKeyRS: public Model {
-		GLuint tex;
 		public:
 			WhiteKeyRS();
 			virtual ~WhiteKeyRS();
-			virtual void drawSolid();
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM);
+			void init();
 	};
 
 	extern WhiteKeyRS whitekeyrs;

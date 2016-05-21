@@ -2,7 +2,7 @@
 #define PIANOBOX_H
 
 #include "model.h"
-#include "lodepng.h"
+#include "../lodepng.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -18,14 +18,11 @@ namespace Models {
 	}
 
 	class PianoBox: public Model {
-			GLuint tex;
-			GLint bufVertices;
-			GLint bufColors;
-			GLint bufNormals;
 		public:
 			PianoBox();
 			virtual ~PianoBox();
-			virtual void drawSolid();
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM);
+			void init();
 	};
 
 	extern PianoBox pianobox;

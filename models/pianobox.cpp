@@ -5,7 +5,7 @@ namespace Models {
     PianoBox pianobox;
 
     PianoBox::PianoBox(){
-        vertices = PianoBoxInternal::vertices;
+    /*    vertices = PianoBoxInternal::vertices;
         normals = PianoBoxInternal::normals;
         vertexNormals = PianoBoxInternal::vertexNormals;
         texCoords = PianoBoxInternal::texCoords;
@@ -27,21 +27,33 @@ namespace Models {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
         glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-         GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+         GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());*/
         //Making VBO
-        bufVertices = makeBuffer(vertices, vertexCount, sizeof(float)*4);
-        bufNormals = makeBuffer(normals, vertexCount, sizeof(float)*4);
-        bufColors = makeBuffer(colors, vertexCount, sizeof(float)*4);
+
             }
     PianoBox::~PianoBox(){
-        glDeleteTextures(1,&tex);
+        delete shaderProgram;
+        //glDeleteTextures(1,&tex);
         glDeleteBuffers(1,&bufVertices);
         glDeleteBuffers(1,&bufNormals);
         glDeleteBuffers(1,&bufColors);
     }
+    void PianoBox::init(){
+        shaderProgram=new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
+        bufVertices = makeBuffer(PianoBoxInternal::vertices, PianoBoxInternal::vertexCount, sizeof(float)*4);
+        bufNormals = makeBuffer(PianoBoxInternal::normals, PianoBoxInternal::vertexCount, sizeof(float)*4);
+        bufColors = makeBuffer(PianoBoxInternal::colors, PianoBoxInternal::vertexCount, sizeof(float)*4);
 
-    void PianoBox::drawSolid(){
+        glGenVertexArrays(1,&vao); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej
 
+        glBindVertexArray(vao); //Uaktywnij nowo utworzony VAO
+        assignVBOtoAttribute(shaderProgram,(char*)"vertex",bufVertices,4); //"vertex" odnosi się do deklaracji "in vec4 vertex;" w vertex shaderze
+        assignVBOtoAttribute(shaderProgram,(char*)"color",bufColors,4); //"color" odnosi się do deklaracji "in vec4 color;" w vertex shaderze
+        assignVBOtoAttribute(shaderProgram,(char*)"normal",bufNormals,4); //"normal" odnosi się do deklaracji "in vec4 normal;" w vertex shaderze
+        glBindVertexArray(0); //Dezaktywuj VAO
+    }
+    void PianoBox::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
+/*
         glEnable(GL_NORMALIZE);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D,tex);
@@ -57,7 +69,15 @@ namespace Models {
     glEnableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY); //Wyłącz używanie tablicy wierzchołków
     glDisableClientState(GL_COLOR_ARRAY); //Wyłącz używanie tablicy kolorów
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
+        shaderProgram->use();
+        glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
+    	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));
+    	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"M"),1, false, glm::value_ptr(mM));
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES,0,PianoBoxInternal::vertexCount);
+        glBindVertexArray(0);
+        shaderProgram->disable();
     }
 
     namespace PianoBoxInternal{
