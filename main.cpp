@@ -23,6 +23,7 @@ using namespace std;
  Piano* piano;
  FTGLPixmapFont font("opensans.ttf");
  Models::OBJModel* model;
+ glm::vec4 light;
 
 
 void key_callback(GLFWwindow* window, int key,
@@ -64,7 +65,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     font.FaceSize(20);
 	piano = new Piano();
     model = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", (char *)"vshader.txt", (char *)"fshader.txt");
-    model->fillWhiteColor();
+    model->fillWithColor(1.0f, 0, 0,1.0f);
+    light = glm::vec4(-2.0f,5.0f,-5.0f,1.0f);
     //Wczytanie do pamięci komputera
 }
 //Procedura rysująca zawartość sceny
@@ -72,7 +74,7 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-
+    glm::vec4 camera = glm::vec4(0.0f, 0.0f, -5.0f,1.0f);
 
 	glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
 		glm::vec3(0.0f, 0.0f, -5.0f),
@@ -90,7 +92,7 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
     M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
     //piano->drawObject(P, V, M);
 
-    model-> drawModel(P,V,M);
+    model-> drawModel(P,V,M,light,camera);
     glTranslatef(0.0f,0.0f,-1.0f);
     string s = to_string(z_pos);
     font.Render(s.c_str());

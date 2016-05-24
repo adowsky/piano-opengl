@@ -31,9 +31,9 @@ namespace Models {
         return this;
     }
     OBJModel* OBJModel::normals(vector<float> normals){
-        bufNormals = makeBuffer(&normals[0],normals.size()/4, sizeof(float)*4);
+        bufNormals = makeBuffer(&normals[0],normals.size()/3, sizeof(float)*3);
         glBindVertexArray(vao); //Uaktywnij nowo utworzony VAO
-        assignVBOtoAttribute(shaderProgram,(char*)"normal",bufNormals,4); //"vertex" odnosi się do deklaracji "in vec4 vertex;" w vertex shaderze
+        assignVBOtoAttribute(shaderProgram,(char*)"normal",bufNormals,3); //"vertex" odnosi się do deklaracji "in vec4 vertex;" w vertex shaderze
         glBindVertexArray(0); //Dezaktywuj VAO
         return this;
     }
@@ -59,23 +59,28 @@ namespace Models {
         glBindVertexArray(0); //Dezaktywuj VAO
         return this;
     }
-    void OBJModel::fillWhiteColor(){
-        vector<float> buff;
-        for(int i=0;i<vertexCount*4;++i){
-            buff.push_back(1.0f);
-        }
-        colors(buff);
-    }
-    void OBJModel::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
+    void OBJModel::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light,glm::vec4 cam){
         shaderProgram->use();
         glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"M"),1, false, glm::value_ptr(mM));
+        glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"lightPos"),1, false, glm::value_ptr(light));
+        glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"cameraPos"),1, false, glm::value_ptr(cam));
         glBindVertexArray(vao);
 
         glDrawArrays(GL_TRIANGLES,0,vertexCount);
 
         glBindVertexArray(0);
         shaderProgram->disable();
+    }
+    void OBJModel::fillWithColor(float r,float g,float b,float a){
+        vector<float> buff;
+        for(int i=0;i<vertexCount;++i){
+            buff.push_back(r);
+            buff.push_back(g);
+            buff.push_back(b);
+            buff.push_back(a);
+        }
+        colors(buff);
     }
 }
