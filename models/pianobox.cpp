@@ -53,23 +53,6 @@ namespace Models {
         glBindVertexArray(0); //Dezaktywuj VAO
     }
     void PianoBox::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
-/*
-        glEnable(GL_NORMALIZE);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D,tex);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_VERTEX_ARRAY); //Włącz używanie tablicy wierzchołków
-        glEnableClientState(GL_COLOR_ARRAY); //Włącz używanie tablicy kolorów
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glVertexPointer(4, GL_FLOAT, 0, vertices); //Wskaż tablicę wierzchołków
-        glNormalPointer(GL_FLOAT,sizeof(float)*4,vertexNormals);
-        glColorPointer(4, GL_FLOAT, 0, colors); //Wskaż tablicę kolorów
-        glTexCoordPointer( 2, GL_FLOAT, 0, texCoords);
-        glDrawArrays(GL_TRIANGLES, 0, 72); //Wykonaj rysowanie
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY); //Wyłącz używanie tablicy wierzchołków
-    glDisableClientState(GL_COLOR_ARRAY); //Wyłącz używanie tablicy kolorów
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
         shaderProgram->use();
         glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));

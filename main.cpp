@@ -1,4 +1,6 @@
 #define GLM_FORCE_RADIANS
+#define GLM_SWIZZLE
+#define GLM_SWIZZLE_FULL
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <FTGL/ftgl.h>
@@ -11,6 +13,8 @@
 #include "lodepng.h"
 #include "piano.h"
 #include "models/platform.h"
+#include "models/objmodel.h"
+#include "objparser.h"
 using namespace std;
 
  float speed;
@@ -18,7 +22,7 @@ using namespace std;
  float z_spd;
  Piano* piano;
  FTGLPixmapFont font("opensans.ttf");
-
+ Models::OBJModel* model;
 
 
 void key_callback(GLFWwindow* window, int key,
@@ -59,7 +63,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     	glfwSetKeyCallback(window, key_callback);
     font.FaceSize(20);
 	piano = new Piano();
-
+    model = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", (char *)"vshader.txt", (char *)"fshader.txt");
+    model->fillWhiteColor();
     //Wczytanie do pamięci komputera
 }
 //Procedura rysująca zawartość sceny
@@ -83,8 +88,9 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
 
 //    platform.drawSolid();
     M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
-    piano->drawObject(P, V, M);
+    //piano->drawObject(P, V, M);
 
+    model-> drawModel(P,V,M);
     glTranslatef(0.0f,0.0f,-1.0f);
     string s = to_string(z_pos);
     font.Render(s.c_str());
