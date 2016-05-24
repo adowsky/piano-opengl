@@ -12,12 +12,20 @@ Piano::Piano(ShaderProgram* shader){
     openAngle = 0.0f;
 
     pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
-        pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
+    pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
+    rskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "C_Cube.001", shader);
+    bskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "D_Cube.002", shader);
+    lskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "E_Cube.003", shader);
+    black_key = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "A#_Cube.013", shader);
 }
 
 Piano::~Piano(){
     delete pianobox;
     delete pianocover;
+    delete rskey;
+    delete bskey;
+    delete lskey;
+    delete black_key;
 }
 
 void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light){
@@ -25,7 +33,7 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
         openAngle -= 0.7*glfwGetTime();
     else if(!isOpening &&openAngle<0)
         openAngle += 0.7*glfwGetTime();
-        
+
     pianobox->drawModel(mP, mV, mM,light);
     pianocover->drawModel(mP, mV, glm::rotate(mM, openAngle, glm::vec3(1.0f,0,0)),light);
     /*glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));

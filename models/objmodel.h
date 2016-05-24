@@ -26,12 +26,14 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <cfloat>
 #include "shaderprogram.h"
 #include "constants.h"
 using namespace std;
 namespace Models {
 
 	class OBJModel {
+		void countSizes(vector<float>vertices);
 	protected:
 	void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize);
 	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
@@ -42,6 +44,9 @@ namespace Models {
 	GLuint bufTex;
 	GLuint vao;
 	int vertexCount;
+	float width;
+	float height;
+	float length;
 	public:
 			ShaderProgram *shaderProgram;
 			OBJModel(char* vShaderLoc,char* fShaderLoc);
@@ -54,6 +59,9 @@ namespace Models {
 			void fillWithColor(float r,float g,float b,float a);
 			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light);
 			virtual void drawModel();
+			float getWidth();
+			float getHeight();
+			float getLength();
 	};
 }
 

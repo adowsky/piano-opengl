@@ -26,9 +26,10 @@ namespace Models {
     }
 
     OBJModel* OBJModel::vertices(vector<float> vertices){
-        bufVertices = makeBuffer(&vertices[0],vertices.size()/4, sizeof(float)*4);
         vertexCount = vertices.size()/4;
+        countSizes(vertices);
 
+        bufVertices = makeBuffer(&vertices[0],vertices.size()/4, sizeof(float)*4);
         glBindVertexArray(vao); //Uaktywnij nowo utworzony VAO
         assignVBOtoAttribute(shaderProgram,(char*)"vertex",bufVertices,4); //"vertex" odnosi się do deklaracji "in vec4 vertex;" w vertex shaderze
         glBindVertexArray(0); //Dezaktywuj VAO
@@ -91,5 +92,33 @@ namespace Models {
             buff.push_back(a);
         }
         colors(buff);
+    }
+    void OBJModel::countSizes(vector<float>vertices){
+        float min_x = FLT_MAX;
+        float max_x = FLT_MIN;
+        float min_y = FLT_MAX;
+        float max_y = FLT_MIN;
+        float min_z = FLT_MAX;
+        float max_z = FLT_MIN;
+        for(size_t i=0;i<vertices.size();i+=4){
+            if(vertices[i]<min_x) min_x = vertices[i];
+            if(vertices[i]>max_x) max_x = vertices[i];
+            if(vertices[i+1]<min_y) min_y = vertices[i+1];
+            if(vertices[i+1]>max_y) max_y = vertices[i+1];
+            if(vertices[i+2]<min_z) min_z = vertices[i+2];
+            if(vertices[i+2]>max_z) max_z = vertices[i+2];
+        }
+        width = max_x - min_x;
+        height = max_y - min_y;
+        length = max_z - min_z;
+    }
+    float OBJModel::getWidth(){
+        return width;
+    }
+    float OBJModel::getHeight(){
+        return height;
+    }
+    float OBJModel::getLength(){
+        return this->length;
     }
 }

@@ -47,7 +47,7 @@ void key_callback(GLFWwindow* window, int key,
 		if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;
         if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) y_axis = 0;
         if(key == GLFW_KEY_W || key == GLFW_KEY_S) z_spd = 0;
-        if (key == GLFW_KEY_X || key == GLFW_KEY_Z) x_axis = 0f;
+        if (key == GLFW_KEY_X || key == GLFW_KEY_Z) x_axis = 0;
 	}
 }
 
