@@ -27,6 +27,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include "shaderprogram.h"
+#include "constants.h"
 using namespace std;
 namespace Models {
 
@@ -44,13 +45,15 @@ namespace Models {
 	public:
 			ShaderProgram *shaderProgram;
 			OBJModel(char* vShaderLoc,char* fShaderLoc);
+			OBJModel(ShaderProgram* shader);
 			virtual ~OBJModel();
 			OBJModel* vertices(vector<float>);
 			OBJModel* normals(vector<float>);
 			OBJModel* colors(vector<float>);
 			OBJModel* textureCoords(vector<float>);
 			void fillWithColor(float r,float g,float b,float a);
-			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light,glm::vec4 cam);
+			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light);
+			virtual void drawModel();
 	};
 }
 

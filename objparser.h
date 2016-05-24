@@ -8,9 +8,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <climits>
+#include "models/shaderprogram.h"
 using namespace std;
 class OBJParser{
 public:
     static Models::OBJModel* parseFromFileByName(char* fileloc,string objName,char* vShader, char* fShader);
+    static Models::OBJModel* parseFromFileByName(char *fileLoc, string objName, ShaderProgram* shader);
 };
 #endif

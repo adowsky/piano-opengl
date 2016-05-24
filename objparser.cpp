@@ -1,6 +1,5 @@
 #include "objparser.h"
-
-Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, char* vShader, char* fShader){
+Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, ShaderProgram* shader){
     ifstream in(fileLoc, ios::in);
    if (!in){
        throw "IOException";
@@ -9,7 +8,7 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
    bool found = false;
    vector<glm::vec3> vertices;
    vector<float> textures;
-   vector<glm::vec3> normals;
+   vector<glm::vec4> normals;
    vector<int>faces[3];
    unsigned int minVertexNo = UINT_MAX;
    unsigned int minNormalsNo = UINT_MAX;
@@ -27,11 +26,12 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
 
            }else if(line.substr(0,3) == "vn "){
                istringstream s(line.substr(3));
-               glm::vec3 v;
+               glm::vec4 v;
                s >> v.x;
                s >> v.y;
                s >> v.z;
-               v = glm::normalize(v);
+               v.w = 0.0f;
+               //v = glm::normalize(v);
                normals.push_back(v);
            }else if(line.substr(0,3) == "vt "){
                istringstream s(line.substr(3));
@@ -46,13 +46,19 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
                while(getline(wholeLine,triplet,' ')){
                    istringstream s(triplet);
                    string single;
-                   int i=0;
+                   unsigned int i=0;
                    while(getline(s,single,'/')){
-                       int index = stoi(single);
+                       unsigned int index;
+                       try{
+                       index = stoi(single);
+                   }catch(std::invalid_argument ex){
+                       i++;
+                       continue;
+                   }
                        faces[i].push_back(index);
                        if(i==0 && index< minVertexNo) minVertexNo = index;
                        if(i==2 && index< minNormalsNo) minNormalsNo = index;
-                       i++;
+                    i++;
                    }
                }
            }
@@ -67,20 +73,24 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
    }
    vector<float> realVertices;
    vector<float> realNormals;
-   for(int i=0;i<faces[0].size();i++){
-       printf("%d\n",(faces[0][i] - minVertexNo));
+   for(unsigned int i=0;i<faces[0].size();i++){
        realVertices.push_back(vertices[(faces[0][i] - minVertexNo)].x);
        realVertices.push_back(vertices[(faces[0][i] - minVertexNo)].y);
        realVertices.push_back(vertices[(faces[0][i] - minVertexNo)].z);
        realVertices.push_back(1.0f);
    }
-
-   for(int i=0;i<faces[2].size();i++){
-       realNormals.push_back(normals[faces[2][i]].x);
+   printf("read vertices\n" );
+   for(unsigned int i=0;i<faces[2].size();i++){
+       realNormals.push_back(normals[(faces[2][i] - minNormalsNo)].x);
        realNormals.push_back(normals[(faces[2][i] - minNormalsNo)].y);
        realNormals.push_back(normals[(faces[2][i] - minNormalsNo)].z);
+       realNormals.push_back(normals[(faces[2][i] - minNormalsNo)].w);
    }
-   Models::OBJModel* model = new Models::OBJModel(vShader,fShader);
+      printf("read normals\n");
+   Models::OBJModel* model = new Models::OBJModel(shader);
    model->vertices(realVertices)->normals(realNormals);
    return model;
+}
+Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, char* vShader, char* fShader){
+    return parseFromFileByName(fileLoc,objName, new ShaderProgram(vShader,NULL,fShader));
 }

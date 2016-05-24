@@ -3,20 +3,32 @@
 Piano::Piano(){
     isOpening = false;
     openAngle = 0.0f;
-    pianobox.init();
+    ShaderProgram* shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
+    pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
+    pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
+}
+Piano::Piano(ShaderProgram* shader){
+    isOpening = false;
+    openAngle = 0.0f;
+
+    pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
+        pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
 }
 
 Piano::~Piano(){
-    printf("Piano destroyed\n" );
+    delete pianobox;
+    delete pianocover;
 }
 
-void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM){
-    pianobox.drawModel(mP, mV, mM);
-    /*glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));
+void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light){
     if(isOpening && openAngle>-maxAngle)
         openAngle -= 0.7*glfwGetTime();
     else if(!isOpening &&openAngle<0)
         openAngle += 0.7*glfwGetTime();
+        
+    pianobox->drawModel(mP, mV, mM,light);
+    pianocover->drawModel(mP, mV, glm::rotate(mM, openAngle, glm::vec3(1.0f,0,0)),light);
+    /*glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));
     M2 = glm::rotate(M2,openAngle,glm::vec3(1,0,0));
 
     glLoadMatrixf(glm::value_ptr(V*M2));

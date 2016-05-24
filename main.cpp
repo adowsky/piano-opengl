@@ -12,19 +12,21 @@
 #include <iostream>
 #include "lodepng.h"
 #include "piano.h"
-#include "models/platform.h"
 #include "models/objmodel.h"
 #include "objparser.h"
+#include "cube.h"
+#include "models/shaderprogram.h"
 using namespace std;
 
  float speed;
  float y_axis;
+ float x_axis;
  float z_spd;
  Piano* piano;
  FTGLPixmapFont font("opensans.ttf");
  Models::OBJModel* model;
  glm::vec4 light;
-
+ ShaderProgram* shader;
 
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
@@ -33,6 +35,8 @@ void key_callback(GLFWwindow* window, int key,
 		if (key == GLFW_KEY_RIGHT) speed = 3.14f;
         if (key == GLFW_KEY_UP) y_axis = 3.14f;
         if (key == GLFW_KEY_DOWN) y_axis = -3.14f;
+        if (key == GLFW_KEY_X) x_axis = 3.14f;
+        if (key == GLFW_KEY_Z) x_axis = -3.14f;
         if(key == GLFW_KEY_W) z_spd = -0.5f;
         if(key == GLFW_KEY_S) z_spd =  0.5f;
         if(key == GLFW_KEY_O) piano->open();
@@ -43,6 +47,7 @@ void key_callback(GLFWwindow* window, int key,
 		if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;
         if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) y_axis = 0;
         if(key == GLFW_KEY_W || key == GLFW_KEY_S) z_spd = 0;
+        if (key == GLFW_KEY_X || key == GLFW_KEY_Z) x_axis = 0f;
 	}
 }
 
@@ -52,29 +57,34 @@ void error_callback(int error, const char* description) {
 
 }
 
+
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
-    	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
+    	glClearColor(1, 1, 1, 1); //Czyść ekran na czarno
     	// glEnable(GL_LIGHTING); //Włącz tryb cieniowania
     	// glEnable(GL_LIGHT0); //Włącz domyslne światło
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
-        glEnable(GL_BLEND);
+        //glEnable(GL_BLEND);
     	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
     	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
     font.FaceSize(20);
-	piano = new Piano();
-    model = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", (char *)"vshader.txt", (char *)"fshader.txt");
-    model->fillWithColor(1.0f, 0, 0,1.0f);
-    light = glm::vec4(-2.0f,5.0f,-5.0f,1.0f);
-    //Wczytanie do pamięci komputera
+    shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
+	piano = new Piano(shader);
+    light = glm::vec4(0.0f,0.0f,-10.0f,1.0f);
+    //model = OBJParser::parseFromFileByName((char *)"models/cube.obj", "Cube",shader);
+}
+
+void freeProgram(){
+    delete shader;
+    //delete model;
+    delete piano;
 }
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
+void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float x_axis) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-    glm::vec4 camera = glm::vec4(0.0f, 0.0f, -5.0f,1.0f);
 
 	glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
 		glm::vec3(0.0f, 0.0f, -5.0f),
@@ -85,19 +95,20 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis) {
 
 	glm::mat4 M = glm::mat4(1.0f);
     M = glm::translate(M, glm::vec3(0.0f,-2.0f,z_pos));
-    M = glm::rotate(M,y_axis,glm::vec3(1, 0, 0));
+    M = glm::rotate(M,y_axis,glm::vec3(0, 0, 1));
 	M = glm::rotate(M, angle, glm::vec3(0, 1, 0));
+    M = glm::rotate(M, x_axis, glm::vec3(1, 0, 0));
 
 //    platform.drawSolid();
     M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
-    //piano->drawObject(P, V, M);
-
-    model-> drawModel(P,V,M,light,camera);
+    piano->drawObject(P, V, M,light);
+    //model-> drawModel(P,V,M,light);
     glTranslatef(0.0f,0.0f,-1.0f);
     string s = to_string(z_pos);
     font.Render(s.c_str());
 	//Przerzuć tylny bufor na przedni
 	glfwSwapBuffers(window);
+
 
 }
 
@@ -137,6 +148,7 @@ int main(void)
 	float angle = 0.0f; //Kąt obrotu torusa
     float z_pos = 0.0f;
     float y_angle = 0.0f;
+    float x_angle = 0.0f;
 	glfwSetTime(0); //Wyzeruj licznik czasu
 
 	//Główna pętla
@@ -144,12 +156,13 @@ int main(void)
 	{
 		angle += speed*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         y_angle += y_axis*glfwGetTime();
+        x_angle += x_axis*glfwGetTime();
         z_pos += z_spd*glfwGetTime();
 		glfwSetTime(0); //Wyzeruj licznik czasu
-		drawScene(window,angle, z_pos,y_angle); //Wykonaj procedurę rysującą
+		drawScene(window,angle, z_pos,y_angle,x_angle); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
-	delete (piano);
+	freeProgram();
 	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
 	exit(EXIT_SUCCESS);
