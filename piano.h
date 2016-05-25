@@ -21,7 +21,7 @@ class Piano{
     bool isOpening;
     float openAngle;
     const float maxAngle = 2.0f/3*PI;
-    void drawOctaves(glm::mat4 V, glm::mat4 M, int count);
+    void drawOctaves(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light, int count);
 public:
     Piano();
     Piano(ShaderProgram*);

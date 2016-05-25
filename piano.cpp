@@ -10,13 +10,19 @@ Piano::Piano(){
 Piano::Piano(ShaderProgram* shader){
     isOpening = false;
     openAngle = 0.0f;
-
-    pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
-    rskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "C_Cube.001", shader);
-    bskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "D_Cube.002", shader);
-    lskey = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "E_Cube.003", shader);
-    black_key = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "A#_Cube.013", shader);
+    pianocover = OBJParser::parseFromFileByName((char *)"models/pianocover.obj", "Plane", shader);
+    rskey = OBJParser::parseFromFileByName((char *)"models/rskey.obj", "C_Cube.001", shader);
+    printf("rskey width: %f",rskey->getWidth());
+    rskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    bskey = OBJParser::parseFromFileByName((char *)"models/bskey.obj", "D_Cube.002", shader);
+    bskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    printf("bskey width: %f",bskey->getWidth());
+    lskey = OBJParser::parseFromFileByName((char *)"models/lskey.obj", "E_Cube.003", shader);
+    lskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    printf("lskey width: %f",lskey->getWidth());
+    black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
+    black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Piano::~Piano(){
@@ -35,15 +41,11 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
         openAngle += 0.7*glfwGetTime();
 
     pianobox->drawModel(mP, mV, mM,light);
-    pianocover->drawModel(mP, mV, glm::rotate(mM, openAngle, glm::vec3(1.0f,0,0)),light);
-    /*glm::mat4 M2 = glm::translate(M, glm::vec3(0,0.602f,-0.1375f));
-    M2 = glm::rotate(M2,openAngle,glm::vec3(1,0,0));
 
-    glLoadMatrixf(glm::value_ptr(V*M2));
-    pianocover.drawSolid();
-    M2 = glm::translate(M, glm::vec3(-0.71f,0,0));
-    drawOctaves(V, M2, 7);
-    glLoadMatrixf(glm::value_ptr(V*M));*/
+    glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));
+     M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));
+    pianocover->drawModel(mP, mV,M ,light);
+    drawOctaves( mP, mV, glm::translate(mM,glm::vec3(-pianobox->getXmin()-1.5*rskey->getWidth(),0,-pianobox->getLength()*0.6f)), light, 3);
 }
 float Piano::height(){
     return 1.446f;
@@ -54,66 +56,54 @@ void Piano::open(){
 void Piano::close(){
     isOpening = false;
 }
-void Piano::drawOctaves(glm::mat4 V, glm::mat4 M, int count){
-/*    glm::mat4 M2 = M;
-    glColor3d(1, 0, 0);
+void Piano::drawOctaves(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light, int count){
+    glm::mat4 M2 = mM;
+    float translation;
     for(int i=0; i<count;i++){
-        //C
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keyrs.drawSolid();
+        rskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*rskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        bskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*bskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(- translation,0,0));
+        lskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*lskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        rskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*rskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        bskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*bskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        bskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*bskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        lskey->drawModel(mP,mV,M2,light);
+        translation = 1.1*lskey->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+    }
+    M2 = mM;
+    for(int i=0; i<count;i++){
+        translation = 2.2*rskey->getWidth()/3;
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        black_key->drawModel(mP,mV,M2,light);
+        translation = bskey->getWidth()/3+ black_key->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
 
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //C#
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        bkey.drawSolid();
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //D
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keybs.drawSolid();
+        black_key->drawModel(mP,mV,M2,light);
 
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //D#
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        bkey.drawSolid();
-        M2 = glm::translate(M2, glm::vec3(0.0397f,0,0));
-        M2 = glm::scale(M2, glm::vec3(-1,1,1));
-        //E
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keyrs.drawSolid();
+        translation = 2.2*lskey->getWidth()/3 + 2*rskey->getWidth()/3 + black_key->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        black_key->drawModel(mP,mV,M2,light);
 
-        M2 = glm::scale(M2, glm::vec3(-1,1,1));
-        //F
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keyrs.drawSolid();
+        translation = 1.1*bskey->getWidth()/3+ black_key->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        black_key->drawModel(mP,mV,M2,light);
 
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //F#
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        bkey.drawSolid();
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //G
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keybs.drawSolid();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+        black_key->drawModel(mP,mV,M2,light);
 
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //G#
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        bkey.drawSolid();
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //A
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keybs.drawSolid();
-
-        M2 = glm::translate(M2, glm::vec3(0.0147f,0,0));
-        //A#
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        bkey.drawSolid();
-        M2 = glm::translate(M2, glm::vec3(0.0397f,0,0));
-        M2 = glm::scale(M2, glm::vec3(-1,1,1));
-        //B
-        glLoadMatrixf(glm::value_ptr(V*M2));
-        keyrs.drawSolid();
-        M2 = glm::scale(M2, glm::vec3(-1,1,1));
-*/
-    //}
+        translation = 2.2*lskey->getWidth()/3 + black_key->getWidth();
+        M2 = glm::translate(M2,glm::vec3(-translation,0,0));
+    }
 }

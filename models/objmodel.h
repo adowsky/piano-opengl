@@ -26,29 +26,37 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
-#include <cfloat>
 #include "shaderprogram.h"
 #include "constants.h"
 using namespace std;
 namespace Models {
+	struct Sizes{
+		float Xmin;
+		float Xmax;
+		float Ymin;
+		float Ymax;
+		float Zmin;
+		float Zmax;
+	};
 
 	class OBJModel {
+		GLuint tex;
+		GLuint bufVertices;
+		GLuint bufColors;
+		GLuint bufNormals;
+		GLuint bufTex;
+		GLuint vao;
+		ShaderProgram *shaderProgram;
+		int vertexCount;
+		Sizes* sizes;
 		void countSizes(vector<float>vertices);
 	protected:
 	void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize);
 	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
-	GLuint tex;
-	GLuint bufVertices;
-	GLuint bufColors;
-	GLuint bufNormals;
-	GLuint bufTex;
-	GLuint vao;
-	int vertexCount;
-	float width;
-	float height;
-	float length;
+
+
 	public:
-			ShaderProgram *shaderProgram;
+
 			OBJModel(char* vShaderLoc,char* fShaderLoc);
 			OBJModel(ShaderProgram* shader);
 			virtual ~OBJModel();
@@ -62,6 +70,12 @@ namespace Models {
 			float getWidth();
 			float getHeight();
 			float getLength();
+			float getXmin();
+			float getXmax();
+			float getYmin();
+			float getYmax();
+			float getZmin();
+			float getZmax();
 	};
 }
 
