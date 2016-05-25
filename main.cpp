@@ -16,12 +16,16 @@
 #include "objparser.h"
 #include "cube.h"
 #include "models/shaderprogram.h"
+#include "camera.h"
 using namespace std;
 
  float speed;
  float y_axis;
  float x_axis;
  float z_spd;
+ const int XWindowSize = 500;
+ const int YWindowSize = 500;
+ Camera* camera;
  Piano* piano;
  FTGLPixmapFont font("opensans.ttf");
  Models::OBJModel* model;
@@ -37,8 +41,10 @@ void key_callback(GLFWwindow* window, int key,
         if (key == GLFW_KEY_DOWN) y_axis = -3.14f;
         if (key == GLFW_KEY_X) x_axis = 3.14f;
         if (key == GLFW_KEY_Z) x_axis = -3.14f;
-        if(key == GLFW_KEY_W) z_spd = -0.5f;
-        if(key == GLFW_KEY_S) z_spd =  0.5f;
+        if(key == GLFW_KEY_W) camera->moveForward(true);
+        if(key == GLFW_KEY_S) camera->moveBack(true);
+        if(key == GLFW_KEY_A) camera->moveLeft(true);
+        if(key == GLFW_KEY_D) camera->moveRight(true);
         if(key == GLFW_KEY_O) piano->open();
         if(key == GLFW_KEY_C) piano->close();
 	}
@@ -46,11 +52,17 @@ void key_callback(GLFWwindow* window, int key,
 	if (action == GLFW_RELEASE) {
 		if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;
         if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) y_axis = 0;
-        if(key == GLFW_KEY_W || key == GLFW_KEY_S) z_spd = 0;
+        if(key == GLFW_KEY_W) camera->moveForward(false);
+        if(key == GLFW_KEY_S) camera->moveBack(false);
+        if(key == GLFW_KEY_A) camera->moveLeft(false);
+        if(key == GLFW_KEY_D) camera->moveRight(false);
         if (key == GLFW_KEY_X || key == GLFW_KEY_Z) x_axis = 0;
 	}
 }
-
+void mouse_move_callback(GLFWwindow* window,double x, double y){
+    camera->rotate( XWindowSize/2.0f -x,  YWindowSize/2.0f -y);
+    glfwSetCursorPos(window,XWindowSize/2.0f, YWindowSize  /2.0f);
+}
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
@@ -68,9 +80,12 @@ void initOpenGLProgram(GLFWwindow* window) {
     	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
     	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
+        glfwSetCursorPosCallback(window, mouse_move_callback);
+        glfwSetCursor(window,glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
     font.FaceSize(20);
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
+    camera = new Camera();
     light = glm::vec4(0.0f,0.0f,-10.0f,1.0f);
     //model = OBJParser::parseFromFileByName((char *)"models/cube.obj", "Cube",shader);
 }
@@ -79,6 +94,7 @@ void freeProgram(){
     delete shader;
     //delete model;
     delete piano;
+    delete camera;
 }
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float x_axis) {
@@ -86,10 +102,7 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float
 
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
-	glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
-		glm::vec3(0.0f, 0.0f, -5.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 V =camera->getViewMatrix();
 
 	glm::mat4 P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
@@ -125,7 +138,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "Piano", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(XWindowSize, YWindowSize, "Piano", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -158,6 +171,7 @@ int main(void)
         y_angle += y_axis*glfwGetTime();
         x_angle += x_axis*glfwGetTime();
         z_pos += z_spd*glfwGetTime();
+        camera->move(glfwGetTime());
 		glfwSetTime(0); //Wyzeruj licznik czasu
 		drawScene(window,angle, z_pos,y_angle,x_angle); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
