@@ -13,14 +13,11 @@ Piano::Piano(ShaderProgram* shader){
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
     pianocover = OBJParser::parseFromFileByName((char *)"models/pianocover.obj", "Plane", shader);
     rskey = OBJParser::parseFromFileByName((char *)"models/rskey.obj", "C_Cube.001", shader);
-    printf("rskey width: %f",rskey->getWidth());
     rskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
     bskey = OBJParser::parseFromFileByName((char *)"models/bskey.obj", "D_Cube.002", shader);
     bskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
-    printf("bskey width: %f",bskey->getWidth());
     lskey = OBJParser::parseFromFileByName((char *)"models/lskey.obj", "E_Cube.003", shader);
     lskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
-    printf("lskey width: %f",lskey->getWidth());
     black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
     black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
@@ -61,24 +58,31 @@ void Piano::drawOctaves(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light
     float translation;
     for(int i=0; i<count;i++){
         rskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*rskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         bskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*bskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(- translation,0,0));
         lskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*lskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         rskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*rskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         bskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*bskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         bskey->drawModel(mP,mV,M2,light);
+
         translation = 1.1*bskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         lskey->drawModel(mP,mV,M2,light);
+        
         translation = 1.1*lskey->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
     }
@@ -87,9 +91,9 @@ void Piano::drawOctaves(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light
         translation = 2.2*rskey->getWidth()/3;
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
         black_key->drawModel(mP,mV,M2,light);
+
         translation = bskey->getWidth()/3+ black_key->getWidth();
         M2 = glm::translate(M2,glm::vec3(-translation,0,0));
-
         black_key->drawModel(mP,mV,M2,light);
 
         translation = 2.2*lskey->getWidth()/3 + 2*rskey->getWidth()/3 + black_key->getWidth();
