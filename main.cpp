@@ -52,22 +52,23 @@ void key_callback(GLFWwindow* window, int key,
         if(key == GLFW_KEY_S) camera->moveBack(true);
         if(key == GLFW_KEY_A) camera->moveLeft(true);
         if(key == GLFW_KEY_D) camera->moveRight(true);
-        if(key == GLFW_KEY_O) piano->open();
+        if(key == GLFW_KEY_V) piano->open();
         if(key == GLFW_KEY_C) piano->close();
 
-        if(key == GLFW_KEY_1) piano->play(0);
-        if(key == GLFW_KEY_2) piano->play(1);
-        if(key == GLFW_KEY_3) piano->play(2);
-        if(key == GLFW_KEY_4) piano->play(3);
-        if(key == GLFW_KEY_5) piano->play(4);
-        if(key == GLFW_KEY_6) piano->play(5);
-        if(key == GLFW_KEY_7) piano->play(6);
-        if(key == GLFW_KEY_8) piano->play(7);
-        if(key == GLFW_KEY_9) piano->play(8);
-        if(key == GLFW_KEY_0) piano->play(9);
+        if(key == GLFW_KEY_T) piano->play(0);
+        if(key == GLFW_KEY_6) piano->play(1);
+        if(key == GLFW_KEY_Y) piano->play(2);
+        if(key == GLFW_KEY_7) piano->play(3);
+        if(key == GLFW_KEY_U) piano->play(4);
+        if(key == GLFW_KEY_I) piano->play(5);
+        if(key == GLFW_KEY_9) piano->play(6);
+        if(key == GLFW_KEY_O) piano->play(7);
+        if(key == GLFW_KEY_0) piano->play(8);
+        if(key == GLFW_KEY_P) piano->play(9);
         if(key == GLFW_KEY_MINUS) piano->play(10);
-        if(key == GLFW_KEY_EQUAL) piano->play(11);
-
+        if(key == GLFW_KEY_LEFT_BRACKET) piano->play(11);
+        if(key == GLFW_KEY_COMMA) piano->octaveDown();
+        if(key == GLFW_KEY_PERIOD) piano->octaveUp();
 	}
 
 	if (action == GLFW_RELEASE) {
