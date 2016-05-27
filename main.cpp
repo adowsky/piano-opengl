@@ -1,6 +1,4 @@
 #define GLM_FORCE_RADIANS
-#define GLM_SWIZZLE
-#define GLM_SWIZZLE_FULL
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <FTGL/ftgl.h>
@@ -99,6 +97,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     	// glEnable(GL_LIGHT0); //Włącz domyslne światło
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
         glEnable(GL_MULTISAMPLE);
+        glEnable(GL_CULL_FACE);
+
         //glEnable(GL_BLEND);
     	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
     	// glEnable(GL_TEXTURE_2D);
@@ -109,38 +109,14 @@ void initOpenGLProgram(GLFWwindow* window) {
     font.FaceSize(20);
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
-    camera = new Camera();
-    light = glm::vec4(0.0f,0.0f,-10.0f,1.0f);
-    //model = OBJParser::parseFromFileByName((char *)"models/cube.obj", "Cube",shader);
+    camera = new Camera ();
+    light = glm::vec4(-5.0f,10.0f,-5.0f,1.0f);
 }
 
 void freeProgram(){
     delete shader;
-    //delete model;
     delete piano;
     delete camera;
-}
-void computeRay(GLFWwindow* window,float *worldPos){
-    double x,y;
-    glfwGetCursorPos(window, &x, &y);
-    x -= XWindowSize/2;
-    y -= YWindowSize/2;
-    x /= (XWindowSize/2);
-    y /= (YWindowSize/2);
-    glm::vec3 h = glm::normalize(camera->getRightVector());
-    glm::vec3 v = glm::normalize(camera->getUpVector());
-    float rad = fov * PI / 180;
-    float vLength = glm::tan( rad / 2 ) * nearPlaneDist;
-    float hLength = vLength * (XWindowSize / YWindowSize);
-     v = v*vLength;
-     h = h*hLength;
-    glm::vec3 pos = camera->getPosition()+ (glm::normalize(camera->getDirectionVector())*nearPlaneDist) + (h*(float)x) + (v*(float)y);
-
-    glm::vec3 dir = pos - camera->getPosition();
-    float s = -pos.z / dir.z;
-		worldPos[0] = pos.x+(dir.x*s);
-		worldPos[1] = pos.y+(dir.y*s);
-		worldPos[2] = 0;
 }
 
 //Procedura rysująca zawartość sceny
@@ -150,20 +126,9 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
 	glm::mat4 V =camera->getViewMatrix();
-
-
     glm::mat4 P = glm::perspective(fov * PI / 180, YWindowSize/(float)XWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
 	glm::mat4 M = glm::mat4(1.0f);
-    M = glm::translate(M, glm::vec3(0.0f,-2.0f,z_pos));
-    M = glm::rotate(M,y_axis,glm::vec3(0, 0, 1));
-	M = glm::rotate(M, angle, glm::vec3(0, 1, 0));
-    M = glm::rotate(M, x_axis, glm::vec3(1, 0, 0));
-
-//    platform.drawSolid();
-    M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
-
     piano->drawObject(P, V, M,light);
-    //model-> drawModel(P,V,M,light);
     glTranslatef(0.0f,YWindowSize,-1.0f);
     string s = to_string(fps) + " FPS";
     font.Render(s.c_str());
@@ -236,7 +201,9 @@ glfwWindowHint(GLFW_SAMPLES, 4);
          nbFrames = 0;
          lastTime += 1.0;
      }
+        if(nbFrames<121){
         nbFrames++;
+
 		angle += speed*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         y_angle += y_axis*glfwGetTime();
         x_angle += x_axis*glfwGetTime();
@@ -248,6 +215,7 @@ glfwWindowHint(GLFW_SAMPLES, 4);
 		drawScene(window,angle, z_pos,y_angle,x_angle,fps); //Wykonaj procedurę rysującą
 
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+    }
 	}
 	freeProgram();
     alDeleteSources(1, &source);

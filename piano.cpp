@@ -170,7 +170,6 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
         openAngle += PI*glfwGetTime();
 
     pianobox->drawModel(mP, mV, mM,light);
-
     glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));
      M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));
     pianocover->drawModel(mP, mV,M ,light);

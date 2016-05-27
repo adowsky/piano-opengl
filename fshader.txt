@@ -9,8 +9,8 @@ void main(void) {
     vec4 mN = normalize(vN);
     vec4 mV = normalize(vV);
     vec4 mL = normalize(vL);
-    float lam = max(dot(mL,mN),0.0f);
-    vec4 mR = reflect(-mL,mN);
+    float lam = max(dot(mN,mL),0.0f);
+    vec4 mR = reflect(-mL,-mN);
     float pho = pow(max(dot(mV,mR),0.0f),40);
     pixelColor = iColor*vec4(lam,lam,lam,1.0f) + vec4(pho,pho,pho,0.0);
 }

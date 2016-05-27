@@ -71,7 +71,7 @@ namespace Models {
         glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"M"),1, false, glm::value_ptr(mM));
-        glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"lPos"),1, false, glm::value_ptr(light));
+        glUniform4fv(shaderProgram->getUniformLocation((char*)"lPos"),1, glm::value_ptr(light));
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES,0,vertexCount);
         glBindVertexArray(0);

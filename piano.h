@@ -1,6 +1,6 @@
 #ifndef PIANO_H
 #define PIANO_H
-
+#define GLM_FORCE_RADIANS
 #include "models/objmodel.h"
 
 #include <glm/glm.hpp>

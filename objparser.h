@@ -1,5 +1,6 @@
 #ifndef OBJPARSER_H
 #define OBJPARSER_H
+#define GLM_FORCE_RADIANS
 #include "models/objmodel.h"
 #include <fstream>
 #include <vector>

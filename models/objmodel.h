@@ -19,6 +19,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #ifndef OBJMODEL_H
 #define OBJMODEL_H
+#define GLM_FORCE_RADIANS
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
