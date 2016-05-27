@@ -35,4 +35,7 @@ public:
     void moveBack(bool);
     glm::vec3 getPosition();
     glm::mat4 getViewMatrix();
+    glm::vec3 getDirectionVector();
+    glm::vec3 getRightVector();
+    glm::vec3 getUpVector();
 };

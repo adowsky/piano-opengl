@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
 #include "lodepng.h"
 #include "piano.h"
 #include "models/objmodel.h"
@@ -17,6 +18,9 @@
 #include "cube.h"
 #include "models/shaderprogram.h"
 #include "camera.h"
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alut.h>
 using namespace std;
 
  float speed;
@@ -31,6 +35,9 @@ using namespace std;
  Models::OBJModel* model;
  glm::vec4 light;
  ShaderProgram* shader;
+ float fov = 50.0f;
+ float nearPlaneDist = 1.0f;
+
 
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
@@ -47,6 +54,20 @@ void key_callback(GLFWwindow* window, int key,
         if(key == GLFW_KEY_D) camera->moveRight(true);
         if(key == GLFW_KEY_O) piano->open();
         if(key == GLFW_KEY_C) piano->close();
+
+        if(key == GLFW_KEY_1) piano->play(0);
+        if(key == GLFW_KEY_2) piano->play(1);
+        if(key == GLFW_KEY_3) piano->play(2);
+        if(key == GLFW_KEY_4) piano->play(3);
+        if(key == GLFW_KEY_5) piano->play(4);
+        if(key == GLFW_KEY_6) piano->play(5);
+        if(key == GLFW_KEY_7) piano->play(6);
+        if(key == GLFW_KEY_8) piano->play(7);
+        if(key == GLFW_KEY_9) piano->play(8);
+        if(key == GLFW_KEY_0) piano->play(9);
+        if(key == GLFW_KEY_MINUS) piano->play(10);
+        if(key == GLFW_KEY_EQUAL) piano->play(11);
+
 	}
 
 	if (action == GLFW_RELEASE) {
@@ -72,16 +93,18 @@ void error_callback(int error, const char* description) {
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
-    	glClearColor(1, 1, 1, 1); //Czyść ekran na czarno
+    	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     	// glEnable(GL_LIGHTING); //Włącz tryb cieniowania
     	// glEnable(GL_LIGHT0); //Włącz domyslne światło
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
+        glEnable(GL_MULTISAMPLE);
         //glEnable(GL_BLEND);
     	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
     	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
         glfwSetCursorPosCallback(window, mouse_move_callback);
         glfwSetCursor(window,glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
+        glHint(	GL_POLYGON_SMOOTH_HINT,GL_NICEST);
     font.FaceSize(20);
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
@@ -96,16 +119,39 @@ void freeProgram(){
     delete piano;
     delete camera;
 }
+void computeRay(GLFWwindow* window,float *worldPos){
+    double x,y;
+    glfwGetCursorPos(window, &x, &y);
+    x -= XWindowSize/2;
+    y -= YWindowSize/2;
+    x /= (XWindowSize/2);
+    y /= (YWindowSize/2);
+    glm::vec3 h = glm::normalize(camera->getRightVector());
+    glm::vec3 v = glm::normalize(camera->getUpVector());
+    float rad = fov * PI / 180;
+    float vLength = glm::tan( rad / 2 ) * nearPlaneDist;
+    float hLength = vLength * (XWindowSize / YWindowSize);
+     v = v*vLength;
+     h = h*hLength;
+    glm::vec3 pos = camera->getPosition()+ (glm::normalize(camera->getDirectionVector())*nearPlaneDist) + (h*(float)x) + (v*(float)y);
+
+    glm::vec3 dir = pos - camera->getPosition();
+    float s = -pos.z / dir.z;
+		worldPos[0] = pos.x+(dir.x*s);
+		worldPos[1] = pos.y+(dir.y*s);
+		worldPos[2] = 0;
+}
+
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float x_axis) {
+void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float x_axis,float fps) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
 	glm::mat4 V =camera->getViewMatrix();
 
-	glm::mat4 P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
+    glm::mat4 P = glm::perspective(fov * PI / 180, YWindowSize/(float)XWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
 	glm::mat4 M = glm::mat4(1.0f);
     M = glm::translate(M, glm::vec3(0.0f,-2.0f,z_pos));
     M = glm::rotate(M,y_axis,glm::vec3(0, 0, 1));
@@ -114,10 +160,11 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float
 
 //    platform.drawSolid();
     M = glm::translate(M, glm::vec3(0.0f,piano->height(),0.0f));
+
     piano->drawObject(P, V, M,light);
     //model-> drawModel(P,V,M,light);
-    glTranslatef(0.0f,0.0f,-1.0f);
-    string s = to_string(z_pos);
+    glTranslatef(0.0f,YWindowSize,-1.0f);
+    string s = to_string(fps) + " FPS";
     font.Render(s.c_str());
 	//Przerzuć tylny bufor na przedni
 	glfwSwapBuffers(window);
@@ -138,10 +185,10 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
+glfwWindowHint(GLFW_SAMPLES, 4);
+
 	window = glfwCreateWindow(XWindowSize, YWindowSize, "Piano", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
 		glfwTerminate();
@@ -155,29 +202,58 @@ int main(void)
 		fprintf(stderr, "Nie można zainicjować GLEW.\n");
 		exit(EXIT_FAILURE);
 	}
-
+    if(!alutInit(0, NULL)){
+        printf("Alut init error!\n");
+    }
+    alGetError();
 	initOpenGLProgram(window); //Operacje inicjujące
+    ALuint buffer, source;
+     ALint state;
+
+
+     buffer = alutCreateBufferFromFile("majesty.wav");
+     alGenSources(1, &source);
+     alSourcei(source, AL_BUFFER, buffer);
 
 	float angle = 0.0f; //Kąt obrotu torusa
     float z_pos = 0.0f;
     float y_angle = 0.0f;
     float x_angle = 0.0f;
-	glfwSetTime(0); //Wyzeruj licznik czasu
 
+	glfwSetTime(0); //Wyzeruj licznik czasu
+    double lastTime = glfwGetTime();
+    int nbFrames = 0;
+    double currTime = lastTime;
+    float fps =0.0f;
+    //alSourcePlay(source);
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
-	{
+	{  currTime += glfwGetTime();
+        if ( currTime - lastTime >= 1.0 ){
+
+         fps = float(nbFrames)/float(currTime - lastTime );
+         nbFrames = 0;
+         lastTime += 1.0;
+     }
+        nbFrames++;
 		angle += speed*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         y_angle += y_axis*glfwGetTime();
         x_angle += x_axis*glfwGetTime();
         z_pos += z_spd*glfwGetTime();
         camera->move(glfwGetTime());
 		glfwSetTime(0); //Wyzeruj licznik czasu
-		drawScene(window,angle, z_pos,y_angle,x_angle); //Wykonaj procedurę rysującą
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+		drawScene(window,angle, z_pos,y_angle,x_angle,fps); //Wykonaj procedurę rysującą
+
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 	freeProgram();
+    alDeleteSources(1, &source);
+    alDeleteBuffers(1, &buffer);
 	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
+
+    alutExit();
 	exit(EXIT_SUCCESS);
 }

@@ -19,18 +19,10 @@ namespace Models {
     }
     OBJModel::OBJModel(char* vShaderLoc,char* fShaderLoc) : OBJModel::OBJModel(new ShaderProgram(vShaderLoc,NULL,fShaderLoc)){
     }
-    void gen(GLuint* vao){
-        glGenVertexArrays(1,vao);
-    }
+
     OBJModel::OBJModel(ShaderProgram* shader){
-      /* min_x = 1.0f;
-        max_x = 1.0f;
-        min_y = 1.0f;
-        max_y = 1.0f;
-        min_z = 1.0f;
-        max_z = 1.0f;*/
         shaderProgram = shader;
-        gen(&vao);
+        glGenVertexArrays(1,&vao);
         sizes = new Sizes;
     }
 
@@ -59,19 +51,19 @@ namespace Models {
         return this;
     }
     OBJModel::~OBJModel(){
+        glDeleteVertexArrays(1,&vao);
         //glDeleteTextures(1,&tex);
         glDeleteBuffers(1,&bufVertices);
         glDeleteBuffers(1,&bufNormals);
         glDeleteBuffers(1,&bufColors);
-        glDeleteBuffers(1,&bufTex);
-        glDeleteVertexArrays(1,&vao);
+        //glDeleteBuffers(1,&bufTex);
         delete sizes;
     }
     OBJModel* OBJModel::textureCoords(vector<float> coords){
-        bufTex = makeBuffer(&coords[0],coords.size()/2, sizeof(float)*2);
+    /*    bufTex = makeBuffer(&coords[0],coords.size()/2, sizeof(float)*2);
         glBindVertexArray(vao); //Uaktywnij nowo utworzony VAO
         assignVBOtoAttribute(shaderProgram,(char*)"color",bufTex,2); //"vertex" odnosi się do deklaracji "in vec4 vertex;" w vertex shaderze
-        glBindVertexArray(0); //Dezaktywuj VAO
+        glBindVertexArray(0); //Dezaktywuj VAO*/
         return this;
     }
     void OBJModel::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light){

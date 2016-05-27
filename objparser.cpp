@@ -86,11 +86,8 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
        realNormals.push_back(normals[(faces[2][i] - minNormalsNo)].w);
    }
    Models::OBJModel* model = new Models::OBJModel(shader);
-   printf("Created model\n");
    model->vertices(realVertices);
-   printf("set vertices\n");
    model->normals(realNormals);
-   printf("set normals\n");
    return model;
 }
 Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, char* vShader, char* fShader){

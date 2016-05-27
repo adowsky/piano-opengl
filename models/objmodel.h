@@ -28,23 +28,14 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <stdio.h>
 #include "shaderprogram.h"
 #include "constants.h"
+#include "datastructs.h"
 using namespace std;
 namespace Models {
-	struct Sizes{
-		float Xmin;
-		float Xmax;
-		float Ymin;
-		float Ymax;
-		float Zmin;
-		float Zmax;
-	};
 
 	class OBJModel {
-		GLuint tex;
 		GLuint bufVertices;
 		GLuint bufColors;
 		GLuint bufNormals;
-		GLuint bufTex;
 		GLuint vao;
 		ShaderProgram *shaderProgram;
 		int vertexCount;
@@ -56,7 +47,6 @@ namespace Models {
 
 
 	public:
-
 			OBJModel(char* vShaderLoc,char* fShaderLoc);
 			OBJModel(ShaderProgram* shader);
 			virtual ~OBJModel();

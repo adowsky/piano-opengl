@@ -75,3 +75,12 @@ glm::vec3 Camera::getPosition(){
 glm::mat4 Camera::getViewMatrix(){
     return glm::lookAt(position, position+direction, up);
 }
+glm::vec3 Camera::getDirectionVector(){
+    return direction;
+}
+glm::vec3 Camera::getUpVector(){
+    return up;
+}
+glm::vec3 Camera::getRightVector(){
+    return right;
+}
