@@ -93,14 +93,11 @@ void error_callback(int error, const char* description) {
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
-    	// glEnable(GL_LIGHTING); //Włącz tryb cieniowania
-    	// glEnable(GL_LIGHT0); //Włącz domyslne światło
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_CULL_FACE);
-
-        //glEnable(GL_BLEND);
-    	// glEnable(GL_COLOR_MATERIAL); //glColor3d ma modyfikować własności materiału
+        glEnable(GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
         glfwSetCursorPosCallback(window, mouse_move_callback);
@@ -110,7 +107,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
     camera = new Camera ();
-    light = glm::vec4(-5.0f,10.0f,-5.0f,1.0f);
+    light = glm::vec4(0.0f,0.0f,-5.0f,1.0f);
 }
 
 void freeProgram(){
@@ -145,7 +142,7 @@ int main(void)
 	GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
 	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
-
+    glewExperimental = GL_TRUE;
 	if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);

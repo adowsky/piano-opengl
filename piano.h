@@ -37,6 +37,7 @@ class Piano{
     Models::OBJModel* bskey;
     Models::OBJModel* lskey;
     Models::OBJModel* black_key;
+    GLuint dirt,wood;
 
     PianoKey* keyboard;
     int octavesCount;
@@ -48,6 +49,7 @@ class Piano{
     const float maxAngle = PI;
     const float maxKeyAngle = 0.02f*PI;
     void drawKeyboard(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light);
+    GLuint loadTexture(char* loc);
 
 public:
     Piano();

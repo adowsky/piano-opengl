@@ -30,31 +30,36 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 #include "constants.h"
 #include "datastructs.h"
+#include "../lodepng.h"
 using namespace std;
 namespace Models {
 
 	class OBJModel {
-		GLuint bufVertices;
-		GLuint bufColors;
-		GLuint bufNormals;
-		GLuint vao;
 		ShaderProgram *shaderProgram;
 		int vertexCount;
+		int normalsCount;
+		int texCount;
+		int colorsCount;
+		float* vertexData,*normalsData,*texCoordsData,*colorsData;
 		Sizes* sizes;
-		void countSizes(vector<float>vertices);
+		GLuint bufVertices,bufColors,bufNormals,bufTex,tex,vao;
+		bool textureShared;
+		void countSizes(float*);
+		void countSizes(vector<glm::vec4>vertices);
 	protected:
-	void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize);
-	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
-
-
+		void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize);
+		void assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize, int stride);
+		GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
 	public:
 			OBJModel(char* vShaderLoc,char* fShaderLoc);
 			OBJModel(ShaderProgram* shader);
 			virtual ~OBJModel();
-			OBJModel* vertices(vector<float>);
-			OBJModel* normals(vector<float>);
-			OBJModel* colors(vector<float>);
-			OBJModel* textureCoords(vector<float>);
+			OBJModel* vertices4f(float*,int );
+			OBJModel* normals4f(float*,int);
+			OBJModel* colors4f(float*,int);
+			OBJModel* textureCoords2f(float*,int);
+			void bindTexture(char* texLocation);
+			void bindTexture(GLuint tex);
 			void fillWithColor(float r,float g,float b,float a);
 			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light);
 			virtual void drawModel();

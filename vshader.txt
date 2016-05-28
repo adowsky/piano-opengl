@@ -9,11 +9,14 @@ uniform mat4 M;
 //Atrybuty
 in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
 in vec4 color;  //kolor wierzcholka (na razie ignorowany)
+in vec4 texture;
 in vec4 normal; //wektor normalny w wierzcholku (na razie ignorowany)
+in vec2 texCoord;
 
 uniform vec4 lPos;
-
+uniform sampler2D textureMap0;
 out vec4 iColor;
+out vec2 iTexCoord;
 out vec4 vN;
 out vec4 vL;
 out vec4 vV;
@@ -24,5 +27,5 @@ void main(void) {
     vN = normalize(transpose(inverse(V*M))*normal);
     vV = normalize(vec4(0.0f,0.0f,0.0f,1.0f) - V*M*vertex);
     iColor = color;
-
+    iTexCoord = texCoord;
 }

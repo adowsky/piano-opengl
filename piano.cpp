@@ -6,18 +6,28 @@ Piano::Piano(){
     ShaderProgram* shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
     pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
+
 }
 Piano::Piano(ShaderProgram* shader){
     isOpening = false;
     openAngle = 0.0f;
+    dirt = loadTexture((char*)"whiteKeyLayer.png");
+    wood = loadTexture((char*)"wood.png");
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
+    pianobox->fillWithColor(1.0f, 0.0f, 0.0f, 1.0f);
+    pianobox->bindTexture((char*)"wood.png");
     pianocover = OBJParser::parseFromFileByName((char *)"models/pianocover.obj", "Plane", shader);
+    pianocover->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    pianocover->bindTexture((char*)"wood.png");
     rskey = OBJParser::parseFromFileByName((char *)"models/rskey.obj", "C_Cube.001", shader);
     rskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    rskey->bindTexture((char*)"whiteKeyLayer.png");
     bskey = OBJParser::parseFromFileByName((char *)"models/bskey.obj", "D_Cube.002", shader);
     bskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    bskey->bindTexture((char*)"whiteKeyLayer.png");
     lskey = OBJParser::parseFromFileByName((char *)"models/lskey.obj", "E_Cube.003", shader);
     lskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
+    lskey->bindTexture((char*)"whiteKeyLayer.png");
     black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
     black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
     octavesCount = 3;
@@ -32,7 +42,8 @@ Piano::~Piano(){
     delete bskey;
     delete lskey;
     delete black_key;
-
+    glDeleteTextures(1,&dirt);
+    glDeleteTextures(1,&wood);
     if (keyboard) {
         for(int i=0;i<12*octavesCount;++i){
             alDeleteSources(1, &keyboard[i].source);
@@ -41,7 +52,20 @@ Piano::~Piano(){
         delete keyboard;
     }
 }
-
+GLuint Piano::loadTexture(char *texLocation){
+    GLuint tex;
+    glActiveTexture(GL_TEXTURE0);
+   std::vector<unsigned char> image;
+   unsigned width, height;
+   unsigned error = lodepng::decode(image, width, height, texLocation);
+   glGenTextures(1,&tex);
+   glBindTexture(GL_TEXTURE_2D, tex);
+   glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glBindTexture(GL_TEXTURE_2D, 0);
+   return tex;
+}
 void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFormat){
     keyboard = new PianoKey[12*octavesCount];
     Models::Dim3D mainTranslate, activeTranslateW,activeTranslateB;
@@ -168,7 +192,6 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
         openAngle -= PI*glfwGetTime();
     else if(!isOpening &&openAngle<0)
         openAngle += PI*glfwGetTime();
-
     pianobox->drawModel(mP, mV, mM,light);
     glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));
      M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));

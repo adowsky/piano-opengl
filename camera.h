@@ -1,3 +1,5 @@
+#ifndef CAMERA_H
+#define CAMERA_H
 #define GLM_FORCE_RADIANS
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -40,3 +42,4 @@ public:
     glm::vec3 getRightVector();
     glm::vec3 getUpVector();
 };
+#endif
