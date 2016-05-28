@@ -96,8 +96,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_BLEND);
+        //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     	// glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
         glfwSetCursorPosCallback(window, mouse_move_callback);
@@ -107,7 +107,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
     camera = new Camera ();
-    light = glm::vec4(0.0f,0.0f,-5.0f,1.0f);
+    light = glm::vec4(0.0f,2.0f,-5.0f,1.0f);
 }
 
 void freeProgram(){
