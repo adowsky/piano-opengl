@@ -31,6 +31,7 @@ Piano::Piano(ShaderProgram* shader){
     floor->bindTexture(floor_img);
     octavesCount = 3;
     activeOctave = 0;
+    //generateOctaves("samples/CAT0", "", "wav");
     generateOctaves("samples/KEPSREC0", "", "wav");
 }
 
@@ -55,17 +56,19 @@ Piano::~Piano(){
 }
 GLuint Piano::loadTexture(char *texLocation){
     GLuint tex;
-    glActiveTexture(GL_TEXTURE0);
    std::vector<unsigned char> image;
    unsigned width, height;
    unsigned error = lodepng::decode(image, width, height, texLocation);
+
    glGenTextures(1,&tex);
    glBindTexture(GL_TEXTURE_2D, tex);
-   glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  // glGenerateMipmap(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, 0);
    return tex;
+
 }
 void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFormat){
     keyboard = new PianoKey[12*octavesCount];
@@ -190,9 +193,9 @@ void Piano::drawKeyboard(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 ligh
 
 void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light){
     if(isOpening && openAngle>-maxAngle)
-        openAngle -= PI*glfwGetTime();
+        openAngle -= PI/2*glfwGetTime();
     else if(!isOpening &&openAngle<0)
-        openAngle += PI*glfwGetTime();
+        openAngle += PI/2*glfwGetTime();
 
     pianobox->drawModel(mP, mV, mM,light);
     glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));

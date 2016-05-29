@@ -133,14 +133,16 @@ namespace Models {
     void OBJModel::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light){
         shaderProgram->use();
         glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,tex);
+        glUniform1i(shaderProgram->getUniformLocation((char*)"textureMap0"),0);
         glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"M"),1, false, glm::value_ptr(mM));
         glUniform4fv(shaderProgram->getUniformLocation((char*)"lPos"),1, glm::value_ptr(light));
-        glUniform1i(shaderProgram->getUniformLocation((char*)"textureMap0"),0);
+
 
         glBindVertexArray(vao);
-        glBindTexture(GL_TEXTURE_2D,tex);
+
         glDrawArrays(GL_TRIANGLES,0,vertexCount);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
