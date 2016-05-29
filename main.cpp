@@ -13,7 +13,6 @@
 #include "piano.h"
 #include "models/objmodel.h"
 #include "objparser.h"
-#include "cube.h"
 #include "models/shaderprogram.h"
 #include "camera.h"
 #include <AL/al.h>

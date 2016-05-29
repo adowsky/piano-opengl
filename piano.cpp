@@ -8,7 +8,7 @@ Piano::Piano(ShaderProgram* shader){
     openAngle = 0.0f;
     dirt = loadTexture((char*)"whiteKeyLayer.png");
     wood = loadTexture((char*)"wood.png");
-    floor_img = loadTexture((char*)"floor4.png");
+    floor_img = loadTexture((char*)"floor5.png");
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
     pianobox->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
     pianobox->bindTexture(wood);
@@ -103,7 +103,7 @@ void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFor
         keyboard[i*12 +3].translation = activeTranslateB;
         keyboard[i*12 +3].movState = MovementState::NONE;
         keyboard[i*12 +3].model = black_key;
-        activeTranslateB.x -= 2.2*lskey->getWidth()/3 + 2*rskey->getWidth()/3 + black_key->getWidth();
+        activeTranslateB.x -= 2.2*lskey->getWidth()/3 + 2.2*rskey->getWidth()/3 + black_key->getWidth();
         //e
         keyboard[i*12 +4].rotation = zeroRotation;
         keyboard[i*12 +4].translation = activeTranslateW;
@@ -145,7 +145,7 @@ void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFor
         keyboard[i*12 +10].translation = activeTranslateB;
         keyboard[i*12 +10].movState = MovementState::NONE;
         keyboard[i*12 +10].model = black_key;
-        activeTranslateB.x -= (2.2+i*0.5)*lskey->getWidth()/3 + black_key->getWidth();
+        activeTranslateB.x -= (2.2)*lskey->getWidth()/3 + black_key->getWidth();
         //b
         keyboard[i*12 +11].rotation = zeroRotation;
         keyboard[i*12 +11].translation = activeTranslateW;
