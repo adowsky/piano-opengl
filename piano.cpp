@@ -1,11 +1,6 @@
 #include "piano.h"
 
 Piano::Piano(){
-    isOpening = false;
-    openAngle = 0.0f;
-    ShaderProgram* shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
-    pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
-    pianocover = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Plane", shader);
 
 }
 Piano::Piano(ShaderProgram* shader){
@@ -13,6 +8,7 @@ Piano::Piano(ShaderProgram* shader){
     openAngle = 0.0f;
     dirt = loadTexture((char*)"whiteKeyLayer.png");
     wood = loadTexture((char*)"wood.png");
+    floor_img = loadTexture((char*)"floor4.png");
     pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
     pianobox->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
     pianobox->bindTexture(wood);
@@ -30,6 +26,9 @@ Piano::Piano(ShaderProgram* shader){
     lskey->bindTexture(dirt);
     black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
     black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
+    floor = OBJParser::parseFromFileByName((char *)"models/floor.obj", "Plane", shader);
+    floor->fillWithColor(0.0f, 0.0f, 1.0f, 1.0f);
+    floor->bindTexture(floor_img);
     octavesCount = 3;
     activeOctave = 0;
     generateOctaves("samples/KEPSREC0", "", "wav");
@@ -42,6 +41,8 @@ Piano::~Piano(){
     delete bskey;
     delete lskey;
     delete black_key;
+    delete floor;
+    glDeleteTextures(1,&floor_img);
     glDeleteTextures(1,&dirt);
     glDeleteTextures(1,&wood);
     if (keyboard) {
@@ -49,7 +50,7 @@ Piano::~Piano(){
             alDeleteSources(1, &keyboard[i].source);
             alDeleteBuffers(1, &keyboard[i].buffer);
         }
-        delete keyboard;
+        delete[] keyboard;
     }
 }
 GLuint Piano::loadTexture(char *texLocation){
@@ -144,7 +145,7 @@ void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFor
         keyboard[i*12 +10].translation = activeTranslateB;
         keyboard[i*12 +10].movState = MovementState::NONE;
         keyboard[i*12 +10].model = black_key;
-        activeTranslateB.x -= 2.2*lskey->getWidth()/3 + black_key->getWidth();
+        activeTranslateB.x -= (2.2+i*0.5)*lskey->getWidth()/3 + black_key->getWidth();
         //b
         keyboard[i*12 +11].rotation = zeroRotation;
         keyboard[i*12 +11].translation = activeTranslateW;
@@ -192,11 +193,14 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
         openAngle -= PI*glfwGetTime();
     else if(!isOpening &&openAngle<0)
         openAngle += PI*glfwGetTime();
+
     pianobox->drawModel(mP, mV, mM,light);
     glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));
-     M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));
+    M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));
     pianocover->drawModel(mP, mV,M ,light);
     drawKeyboard(mP,  mV, mM, light);
+    M = glm::translate(mM,glm::vec3(0,pianobox->getYmin(),0));
+    floor->drawModel(mP, mV, M,light);
 }
 float Piano::height(){
     return 1.446f;

@@ -19,6 +19,23 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alut.h>
+
+#ifdef LINUX
+#include <unistd.h>
+#endif
+#ifdef WINDOWS
+#include <windows.h>
+#endif
+
+void mySleep(int sleepMs)
+{
+#ifdef LINUX
+    usleep(sleepMs * 1000);   // usleep takes sleep time in us (1 millionth of a second)
+#endif
+#ifdef WINDOWS
+    Sleep(sleepMs);
+#endif
+}
 using namespace std;
 
  float speed;
@@ -81,7 +98,6 @@ void key_callback(GLFWwindow* window, int key,
 }
 void mouse_move_callback(GLFWwindow* window,double x, double y){
     camera->rotate( XWindowSize/2.0f -x,  YWindowSize/2.0f -y);
-    glfwSetCursorPos(window,XWindowSize/2.0f, YWindowSize  /2.0f);
 }
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -210,8 +226,10 @@ glfwWindowHint(GLFW_SAMPLES, 4);
         alGetSourcei(source, AL_SOURCE_STATE, &state);
 
 		drawScene(window,angle, z_pos,y_angle,x_angle,fps); //Wykonaj procedurę rysującą
-
+        glfwSetCursorPos(window,XWindowSize/2.0f, YWindowSize  /2.0f);
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+    }else{
+        mySleep(1);
     }
 	}
 	freeProgram();

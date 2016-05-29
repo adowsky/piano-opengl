@@ -16,7 +16,7 @@ void main(void) {
     }else{
         color = iColor;
     }
-    color = color;
+    color = (1.0f-color.w)*iColor + color.w*color;
     color.w =1.0f;
     vec4 mN = normalize(vN);
     vec4 mV = normalize(vV);

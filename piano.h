@@ -37,7 +37,8 @@ class Piano{
     Models::OBJModel* bskey;
     Models::OBJModel* lskey;
     Models::OBJModel* black_key;
-    GLuint dirt,wood;
+    Models::OBJModel* floor;
+    GLuint dirt,wood,floor_img;
 
     PianoKey* keyboard;
     int octavesCount;
