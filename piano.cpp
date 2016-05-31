@@ -9,7 +9,7 @@ Piano::Piano(ShaderProgram* shader){
     dirt = loadTexture((char*)"whiteKeyLayer.png");
     wood = loadTexture((char*)"wood.png");
     floor_img = loadTexture((char*)"floor5.png");
-    pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj", "Cube", shader);
+    pianobox = OBJParser::parseFromFileByName((char *)"models/pianobox.obj","Cube", shader);
     pianobox->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
     pianobox->bindTexture(wood);
     pianocover = OBJParser::parseFromFileByName((char *)"models/pianocover.obj", "Plane", shader);
@@ -26,9 +26,7 @@ Piano::Piano(ShaderProgram* shader){
     lskey->bindTexture(dirt);
     black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
     black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
-    floor = OBJParser::parseFromFileByName((char *)"models/floor.obj", "Plane", shader);
-    floor->fillWithColor(0.0f, 0.0f, 1.0f, 1.0f);
-    floor->bindTexture(floor_img);
+
     octavesCount = 3;
     activeOctave = 0;
     //generateOctaves("samples/CAT0", "", "wav");
@@ -42,7 +40,6 @@ Piano::~Piano(){
     delete bskey;
     delete lskey;
     delete black_key;
-    delete floor;
     glDeleteTextures(1,&floor_img);
     glDeleteTextures(1,&dirt);
     glDeleteTextures(1,&wood);
@@ -59,13 +56,13 @@ GLuint Piano::loadTexture(char *texLocation){
    std::vector<unsigned char> image;
    unsigned width, height;
    unsigned error = lodepng::decode(image, width, height, texLocation);
-
+   printf("%s ERROR: %d\n",texLocation, error);
    glGenTextures(1,&tex);
+
    glBindTexture(GL_TEXTURE_2D, tex);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  // glGenerateMipmap(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, 0);
    return tex;
 
@@ -202,8 +199,7 @@ void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light)
     M = glm::rotate(M, -openAngle, glm::vec3(1.0f,0,0));
     pianocover->drawModel(mP, mV,M ,light);
     drawKeyboard(mP,  mV, mM, light);
-    M = glm::translate(mM,glm::vec3(0,pianobox->getYmin(),0));
-    floor->drawModel(mP, mV, M,light);
+
 }
 float Piano::height(){
     return 1.446f;

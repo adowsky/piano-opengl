@@ -40,6 +40,7 @@ namespace Models {
 		int normalsCount;
 		int texCount;
 		int colorsCount;
+		bool cubeTexMode;
 		float* vertexData,*normalsData,*texCoordsData,*colorsData;
 		Sizes* sizes;
 		GLuint bufVertices,bufColors,bufNormals,bufTex,tex,vao;
@@ -60,6 +61,7 @@ namespace Models {
 			OBJModel* textureCoords2f(float*,int);
 			void bindTexture(char* texLocation);
 			void bindTexture(GLuint tex);
+			void bindTexture(vector<const char*> texlocs);
 			void fillWithColor(float r,float g,float b,float a);
 			virtual void drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light);
 			virtual void drawModel();

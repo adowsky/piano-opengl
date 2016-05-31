@@ -1,4 +1,5 @@
 #include "objmodel.h"
+#include <SOIL/SOIL.h>
 
 namespace Models {
     void OBJModel::assignVBOtoAttribute(ShaderProgram *shaderProgram,char* attributeName, GLuint bufVBO, int vertexSize) {
@@ -30,6 +31,7 @@ namespace Models {
 
     OBJModel::OBJModel(ShaderProgram* shader){
         shaderProgram = shader;
+        cubeTexMode= false;
         bufTex = 0;
         vao = 0;
         bufVertices = 0;
@@ -98,7 +100,7 @@ namespace Models {
         glDeleteBuffers(1,&bufNormals);
         glDeleteBuffers(1,&bufColors);
         if(!textureShared) glDeleteTextures(1,&tex);
-        if (bufTex  ) glDeleteBuffers(1,&bufTex);
+        if (bufTex) glDeleteBuffers(1,&bufTex);
         delete sizes;
         if(vertexData) delete[] vertexData;
         if(normalsData) delete[] normalsData;
@@ -114,38 +116,69 @@ namespace Models {
         unsigned error = lodepng::decode(image, width, height, texLocation);
         glDeleteTextures(1,&tex);
         glGenTextures(1,&tex);
+        cubeTexMode = false;
         glBindTexture(GL_TEXTURE_2D, tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-    void setTex(GLuint* tex){
-        glDeleteTextures(1,tex);
+    void OBJModel::bindTexture(vector<const char*> texLocs){
+        glActiveTexture(GL_TEXTURE0);
+        glDeleteTextures(1,&tex);
+        glGenTextures(1, &tex);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+        int width, height, channels;
+        for(int i=0;i<texLocs.size();++i){
+            printf("%s\n",texLocs[i]);
+            unsigned char* img = SOIL_load_image(texLocs[i], &width, &height, &channels, SOIL_LOAD_RGB);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+        }
+
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        cubeTexMode = true;
     }
+
     void OBJModel::bindTexture(GLuint texture){
          glActiveTexture(GL_TEXTURE0);
-         //glDeleteTextures(1,&tex);
-         setTex(&tex);
+         glDeleteTextures(1,&tex);
          tex = texture;
          textureShared = true;
+         cubeTexMode = false;
     }
     void OBJModel::drawModel(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM, glm::vec4 light){
         shaderProgram->use();
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,tex);
+
         glUniform1i(shaderProgram->getUniformLocation((char*)"textureMap0"),0);
+        glUniform1i(shaderProgram->getUniformLocation((char*)"cube"),0);
         glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"P"),1, false, glm::value_ptr(mP));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"V"),1, false, glm::value_ptr(mV));
     	glUniformMatrix4fv(shaderProgram->getUniformLocation((char*)"M"),1, false, glm::value_ptr(mM));
         glUniform4fv(shaderProgram->getUniformLocation((char*)"lPos"),1, glm::value_ptr(light));
-
+        if(cubeTexMode){
+            glBindTexture (GL_TEXTURE_CUBE_MAP, tex);
+            glBindTexture(GL_TEXTURE_2D,0);
+            glUniform1i(shaderProgram->getUniformLocation((char*)"cubic"),1);
+        }else{
+            glBindTexture(GL_TEXTURE_2D,tex);
+            glBindTexture (GL_TEXTURE_CUBE_MAP, 0);
+            glUniform1i(shaderProgram->getUniformLocation((char*)"cubic"),0);
+        }
 
         glBindVertexArray(vao);
 
         glDrawArrays(GL_TRIANGLES,0,vertexCount);
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if(cubeTexMode)
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        else
+            glBindTexture(GL_TEXTURE_2D,0);
         shaderProgram->disable();
     }
 

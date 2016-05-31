@@ -1,0 +1,14 @@
+#version 330 core
+
+in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
+
+out vec3 tex;
+
+uniform mat4 V;
+uniform mat4 P;
+
+void main(void){
+gl_Position = P*V*vertex;
+tex = vec3(vertex);
+
+}

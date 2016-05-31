@@ -1,4 +1,4 @@
-#include "camera.h"
+ #include "camera.h"
 
 Camera::Camera(){
     horizontalMove = 0;
@@ -16,6 +16,19 @@ Camera::Camera(){
 
 Camera::~Camera(){
 
+}
+Camera::Camera(float x, float y, float z){
+    horizontalMove = 0;
+    horizontalSensivity = 0.001f;
+    horizontalAngle = 0.0f;
+    verticalAngle = 0.0f;
+    verticalSensivity = 0.001f;
+    straightMove = 0;
+    position = glm::vec3(x,y,z);
+    direction = glm::vec3(0.0f,0.0f,5.0f);
+    right = glm::vec3(1.0f,0.0f,0.0f);
+    up = glm::vec3(0.0f,1.0f,0.0f);
+    speed = 1.5f;
 }
 
 void Camera::rotate(int horizontal, int vertical){

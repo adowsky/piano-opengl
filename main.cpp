@@ -14,6 +14,7 @@
 #include "models/objmodel.h"
 #include "objparser.h"
 #include "models/shaderprogram.h"
+#include "scene.h"
 #include "camera.h"
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -45,10 +46,12 @@ using namespace std;
  const int YWindowSize = 500;
  Camera* camera;
  Piano* piano;
+ Scene* scene;
  FTGLPixmapFont font("opensans.ttf");
  Models::OBJModel* model;
  glm::vec4 light;
  ShaderProgram* shader;
+ ShaderProgram* cube;
  float fov = 50.0f;
  float nearPlaneDist = 1.0f;
 
@@ -110,25 +113,25 @@ void initOpenGLProgram(GLFWwindow* window) {
     	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
         glEnable(GL_MULTISAMPLE);
-        glEnable(GL_CULL_FACE);
-        //glEnable(GL_BLEND);
-        //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    	glEnable(GL_TEXTURE_2D);
     	glfwSetKeyCallback(window, key_callback);
         glfwSetCursorPosCallback(window, mouse_move_callback);
         glfwSetCursor(window,glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
         glHint(	GL_POLYGON_SMOOTH_HINT,GL_NICEST);
     font.FaceSize(20);
+    cube = new ShaderProgram((char*)"sshaderv.txt",NULL,(char*)"sshaderf.frag");
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
-    camera = new Camera ();
-    light = glm::vec4(0.0f,2.0f,-5.0f,1.0f);
+    camera = new Camera (0,0,-10.0f);
+    scene = new Scene(cube);
+    light = glm::vec4(-5.0f,10.0f,10.0f,1.0f);
 }
 
 void freeProgram(){
     delete shader;
+    delete cube;
     delete piano;
     delete camera;
+    delete scene;
 }
 
 //Procedura rysująca zawartość sceny
@@ -140,14 +143,13 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float
 	glm::mat4 V =camera->getViewMatrix();
     glm::mat4 P = glm::perspective(fov * PI / 180, YWindowSize/(float)XWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
 	glm::mat4 M = glm::mat4(1.0f);
+
     piano->drawObject(P, V, M,light);
+    scene->drawObject(P, V, M,light);
     glTranslatef(0.0f,YWindowSize,-1.0f);
     string s = to_string(fps) + " FPS";
     font.Render(s.c_str());
-	//Przerzuć tylny bufor na przedni
 	glfwSwapBuffers(window);
-
-
 }
 
 

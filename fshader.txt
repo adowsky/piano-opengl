@@ -4,25 +4,26 @@ in vec4 vN;
 in vec4 vL;
 in vec4 vV;
 in vec2 iTexCoord;
-uniform sampler2D textureMap0;
+in vec3 iVertex;
 
+uniform sampler2D textureMap0;
+uniform samplerCube cube;
+uniform bool cubic;
+uniform mat4 V;
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
 void main(void) {
-    vec4 color;
-    ivec2 size = textureSize( textureMap0, 0);
-    if(size.x>1 && size.y>1){
-    color=texture(textureMap0,iTexCoord);
-    }else{
-        color = iColor;
-    }
-    color = (1.0f-color.w)*iColor + color.w*color;
-    color.w =1.0f;
+    vec4 lCol = vec4(1.0f,0.8f,0.7f,1.0f);
     vec4 mN = normalize(vN);
     vec4 mV = normalize(vV);
     vec4 mL = normalize(vL);
     float lam = max(dot(mN,mL),0.0f);
     vec4 mR = reflect(-mL,-mN);
-    float pho = pow(max(dot(mV,mR),0.0f),40);
-    pixelColor = 0.15*color+color*vec4(lam,lam,lam,1.0f) + color*vec4(pho,pho,pho,0.0);
+    float pho = 0.2*pow(max(dot(mV,mR),0.0f),40);
+    vec2 size = textureSize(textureMap0, 0);
+    vec4 color;
+    color=texture(textureMap0,iTexCoord);
+    color = (1.0f-color.w)*iColor + color.w*color;
+    color.w =1.0f;
+    pixelColor = 0.2*color + vec4(lam,lam,lam,1.0f) + vec4(pho,pho,pho,0.0);
 }

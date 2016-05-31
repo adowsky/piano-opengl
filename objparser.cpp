@@ -66,12 +66,14 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
        else if(line.substr(0,2) == "o "){
            string name = line.substr(2);
            if(name == objName){
+               printf("%s found\n",objName.c_str());
                found = true;
            }
        }
    }
 
    float* realVertices = new float[faces[0].size()*4];
+
    float* realNormals = new float[faces[2].size()*4];
    float* realTex = new float[faces[1].size()*2];
    for(unsigned int i=0;i<faces[0].size();i++){
@@ -91,7 +93,7 @@ Models::OBJModel* OBJParser::parseFromFileByName(char *fileLoc, string objName, 
        realTex[2*i] = textures[(faces[1][i] - minTexNo)].x;
        realTex[2*i+1] = textures[(faces[1][i] - minTexNo)].y;
    }
-
+   printf("%lu vertice\n",faces[0].size());
    Models::OBJModel* model = new Models::OBJModel(shader);
    model->vertices4f(realVertices,faces[0].size());
    model->normals4f(realNormals,faces[2].size());

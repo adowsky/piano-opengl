@@ -26,6 +26,7 @@ class Camera{
     int straightMove;
 public:
     Camera();
+    Camera(float x, float y, float z);
     virtual ~Camera();
     void rotate( int horizontal, int vertical);
     void move(double seconds);
