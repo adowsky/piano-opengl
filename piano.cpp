@@ -56,7 +56,6 @@ GLuint Piano::loadTexture(char *texLocation){
    std::vector<unsigned char> image;
    unsigned width, height;
    unsigned error = lodepng::decode(image, width, height, texLocation);
-   printf("%s ERROR: %d\n",texLocation, error);
    glGenTextures(1,&tex);
 
    glBindTexture(GL_TEXTURE_2D, tex);
