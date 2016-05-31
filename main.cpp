@@ -1,7 +1,6 @@
 #define GLM_FORCE_RADIANS
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <FTGL/ftgl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -47,7 +46,6 @@ using namespace std;
  Camera* camera;
  Piano* piano;
  Scene* scene;
- FTGLPixmapFont font("opensans.ttf");
  Models::OBJModel* model;
  glm::vec4 light;
  ShaderProgram* shader;
@@ -59,12 +57,6 @@ using namespace std;
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
 	if (action == GLFW_PRESS) {
-		if (key == GLFW_KEY_LEFT) speed = -3.14f;
-		if (key == GLFW_KEY_RIGHT) speed = 3.14f;
-        if (key == GLFW_KEY_UP) y_axis = 3.14f;
-        if (key == GLFW_KEY_DOWN) y_axis = -3.14f;
-        if (key == GLFW_KEY_X) x_axis = 3.14f;
-        if (key == GLFW_KEY_Z) x_axis = -3.14f;
         if(key == GLFW_KEY_W) camera->moveForward(true);
         if(key == GLFW_KEY_S) camera->moveBack(true);
         if(key == GLFW_KEY_A) camera->moveLeft(true);
@@ -89,13 +81,10 @@ void key_callback(GLFWwindow* window, int key,
 	}
 
 	if (action == GLFW_RELEASE) {
-		if(key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;
-        if(key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) y_axis = 0;
         if(key == GLFW_KEY_W) camera->moveForward(false);
         if(key == GLFW_KEY_S) camera->moveBack(false);
         if(key == GLFW_KEY_A) camera->moveLeft(false);
         if(key == GLFW_KEY_D) camera->moveRight(false);
-        if (key == GLFW_KEY_X || key == GLFW_KEY_Z) x_axis = 0;
 	}
 }
 void mouse_move_callback(GLFWwindow* window,double x, double y){
@@ -104,7 +93,6 @@ void mouse_move_callback(GLFWwindow* window,double x, double y){
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
-
 }
 
 
@@ -117,7 +105,6 @@ void initOpenGLProgram(GLFWwindow* window) {
         glfwSetCursorPosCallback(window, mouse_move_callback);
         glfwSetCursor(window,glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
         glHint(	GL_POLYGON_SMOOTH_HINT,GL_NICEST);
-    font.FaceSize(20);
     cube = new ShaderProgram((char*)"sshaderv.txt",NULL,(char*)"sshaderf.frag");
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
 	piano = new Piano(shader);
@@ -139,16 +126,11 @@ void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-
 	glm::mat4 V =camera->getViewMatrix();
     glm::mat4 P = glm::perspective(fov * PI / 180, YWindowSize/(float)XWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
 	glm::mat4 M = glm::mat4(1.0f);
-
     piano->drawObject(P, V, M,light);
     scene->drawObject(P, V, M,light);
-    glTranslatef(0.0f,YWindowSize,-1.0f);
-    string s = to_string(fps) + " FPS";
-    font.Render(s.c_str());
 	glfwSwapBuffers(window);
 }
 

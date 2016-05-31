@@ -5,7 +5,7 @@ Academic project. Piano in OpenGL
 * glfw3
 * glew
 * OpenAL
-* SOIL 
+* SOIL
 
 
 ##Linux instalation

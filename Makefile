@@ -1,4 +1,4 @@
-LIBS=-lGL -lglfw -lGLEW  -lftgl -lalut -lopenal -lSOIL -I/usr/include/freetype2
+LIBS=-lGL -lglfw -lGLEW  -lftgl -lalut -lopenal -lSOIL
 FILES=main.cpp piano.cpp lodepng.cpp utils.cpp models/shaderprogram.cpp models/objmodel.cpp objparser.cpp camera.cpp scene.cpp
 
 main_file: $(FILES)
