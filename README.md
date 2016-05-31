@@ -2,10 +2,10 @@
 Academic project. Piano in OpenGL
 
 #Dependencies
-*glfw3 1
-*glew 2
-*OpenAL 3
-*SOIL 4
+* glfw3 1
+* glew 2
+* OpenAL 3
+* SOIL 4
 
 
 ##Linux instalation
