@@ -2,10 +2,10 @@
 Academic project. Piano in OpenGL
 
 #Dependencies
-*glfw3
-*glew
-*OpenAL
-*SOIL
+*glfw3 1
+*glew 2
+*OpenAL 3
+*SOIL 4
 
 
 ##Linux instalation
@@ -41,4 +41,3 @@ If you have all dependencies, you need only one command to compile whole project
 make
 ```
 It will create for you file called main_file which is executable file of the project.
-
