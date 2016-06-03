@@ -13,16 +13,7 @@ Player::Player(vector<char*> files,Piano* piano){
         printf("[MIDI] %s :",files[i]);
         if(midi[i].status()){
             printf("[OK]\n");
-            printf("MIDI size: %d\n",midi[i].size());
-            for(int j=0;j<midi[i].size();++j){
-                int count = 0;
-                for(int k=0;k<midi[i][j].size();k++){
-                    if(midi[i][j][k].isNoteOn())
-                        count++;
-                }
-                printf("channel %d size: %d, notes: %d\n",j,midi[i][j].size(),count);
-
-            }
+            midi[i].joinTracks();
             midi[i].linkNotePairs();
             midi[i].doTimeAnalysis();
         }else{

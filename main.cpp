@@ -65,7 +65,6 @@ void key_callback(GLFWwindow* window, int key,
                 player->stop();
             else  {
                 camera->moveBack(true);
-                printf("ŁIII\n");
             }
         }
         if(key == GLFW_KEY_A) camera->moveLeft(true);

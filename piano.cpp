@@ -25,9 +25,9 @@ Piano::Piano(ShaderProgram* shader){
     lskey->fillWithColor(1.0f, 1.0f, 1.0f, 1.0f);
     lskey->bindTexture(dirt);
     black_key = OBJParser::parseFromFileByName((char *)"models/blackkey.obj", "C#_Cube.009", shader);
-    black_key->fillWithColor(0.0f, 0.0f, 0.0f, 1.0f);
+    black_key->fillWithColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    octavesCount = 3;
+    octavesCount = 5;
     activeOctave = 0;
     lowestNote = 12*3;
     highestNote = 12*3 + 12*octavesCount;
@@ -47,6 +47,7 @@ Piano::~Piano(){
     glDeleteTextures(1,&wood);
     if (keyboard) {
         for(int i=0;i<12*octavesCount;++i){
+            alSourceStop(keyboard[i].source);
             alDeleteSources(1, &keyboard[i].source);
             alDeleteBuffers(1, &keyboard[i].buffer);
         }
