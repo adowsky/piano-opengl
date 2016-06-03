@@ -6,7 +6,7 @@ Academic project. Piano in OpenGL
 * glew
 * OpenAL
 * SOIL
-
+* midifile : https://github.com/craigsapp/midifile
 
 ##Linux instalation
 Use commands below to install dependencies under Linux(tested on Ubuntu 16.04).
