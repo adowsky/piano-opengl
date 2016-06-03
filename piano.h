@@ -41,7 +41,7 @@ class Piano{
     GLuint dirt,wood,floor_img;
 
     PianoKey* keyboard;
-    int octavesCount;
+    int octavesCount, lowestNote,highestNote;
     int activeOctave;
     void generateOctaves(string filePrefix, string fileSuffix, string fileFormat);
     bool isOpening;
@@ -61,8 +61,11 @@ public:
     void open();
     void close();
     void play(int keyNo);
+    void play(int keyNo, float gain);
     void octaveUp();
     void octaveDown();
+    int getHighestNote();
+    int getLowestNote();
 
 };
 

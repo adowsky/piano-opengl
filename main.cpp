@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <dirent.h>
 #include "lodepng.h"
 #include "piano.h"
 #include "models/objmodel.h"
@@ -18,7 +19,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alut.h>
-
+#include "player.h"
 #ifdef LINUX
 #include <unistd.h>
 #endif
@@ -47,6 +48,7 @@ using namespace std;
  Piano* piano;
  Scene* scene;
  Models::OBJModel* model;
+ Player* player;
  glm::vec4 light;
  ShaderProgram* shader;
  ShaderProgram* cube;
@@ -58,7 +60,14 @@ void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
 	if (action == GLFW_PRESS) {
         if(key == GLFW_KEY_W) camera->moveForward(true);
-        if(key == GLFW_KEY_S) camera->moveBack(true);
+        if(key == GLFW_KEY_S){
+            if((mods & GLFW_MOD_SHIFT)!=0)
+                player->stop();
+            else  {
+                camera->moveBack(true);
+                printf("ŁIII\n");
+            }
+        }
         if(key == GLFW_KEY_A) camera->moveLeft(true);
         if(key == GLFW_KEY_D) camera->moveRight(true);
         if(key == GLFW_KEY_V) piano->open();
@@ -73,16 +82,24 @@ void key_callback(GLFWwindow* window, int key,
         if(key == GLFW_KEY_9) piano->play(6);
         if(key == GLFW_KEY_O) piano->play(7);
         if(key == GLFW_KEY_0) piano->play(8);
-        if(key == GLFW_KEY_P) piano->play(9);
+        if(key == GLFW_KEY_P){
+            if((mods & GLFW_MOD_SHIFT)!=0) player->start();
+            else  piano->play(9);
+        }
+        if(key == GLFW_KEY_N) player -> playNext();
+        if(key == GLFW_KEY_B) player -> playPrevious();
         if(key == GLFW_KEY_MINUS) piano->play(10);
         if(key == GLFW_KEY_LEFT_BRACKET) piano->play(11);
         if(key == GLFW_KEY_COMMA) piano->octaveDown();
         if(key == GLFW_KEY_PERIOD) piano->octaveUp();
+        if(key == GLFW_KEY_UP) player ->channelUp();
+        if(key == GLFW_KEY_DOWN)  player ->channelDown();
+
 	}
 
 	if (action == GLFW_RELEASE) {
         if(key == GLFW_KEY_W) camera->moveForward(false);
-        if(key == GLFW_KEY_S) camera->moveBack(false);
+        if((key == GLFW_KEY_S) && (mods & GLFW_MOD_SHIFT)==0) camera->moveBack(false);
         if(key == GLFW_KEY_A) camera->moveLeft(false);
         if(key == GLFW_KEY_D) camera->moveRight(false);
 	}
@@ -94,8 +111,28 @@ void mouse_move_callback(GLFWwindow* window,double x, double y){
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
-
-
+void load_list_of_midi_files(vector<char*>& v){
+    DIR* dir;
+    struct dirent * dirent;
+    dir = opendir("./midi/");
+    int  midiLen = strlen("./midi/");
+    if(dir != NULL){
+        while((dirent = readdir(dir))){
+            if(strlen(dirent->d_name)<=2)
+                continue;
+            char* s = new char[midiLen + strlen(dirent->d_name) + 1];
+            strcpy(s, "./midi/");
+            strcat(s,dirent->d_name);
+            v.push_back(s);
+        }
+        closedir(dir);
+    }
+}
+void free_list_of_midi_files(vector<char*>& v){
+    for(auto& c : v){
+        delete[] c;
+    }
+}
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
@@ -110,6 +147,10 @@ void initOpenGLProgram(GLFWwindow* window) {
 	piano = new Piano(shader);
     camera = new Camera (0,0,-10.0f);
     scene = new Scene(cube);
+    std::vector<char*> v;
+    load_list_of_midi_files(v);
+    player = new Player(v,piano);
+    free_list_of_midi_files(v);
     light = glm::vec4(-5.0f,10.0f,10.0f,1.0f);
 }
 
@@ -119,6 +160,7 @@ void freeProgram(){
     delete piano;
     delete camera;
     delete scene;
+    delete player;
 }
 
 //Procedura rysująca zawartość sceny
@@ -173,14 +215,6 @@ glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     }
     alGetError();
 	initOpenGLProgram(window); //Operacje inicjujące
-    ALuint buffer, source;
-     ALint state;
-
-
-     buffer = alutCreateBufferFromFile("majesty.wav");
-     alGenSources(1, &source);
-     alSourcei(source, AL_BUFFER, buffer);
-
 	float angle = 0.0f; //Kąt obrotu torusa
     float z_pos = 0.0f;
     float y_angle = 0.0f;
@@ -191,8 +225,8 @@ glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     int nbFrames = 0;
     double currTime = lastTime;
     float fps =0.0f;
-    //alSourcePlay(source);
 	//Główna pętla
+    double timer = 0;
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{  currTime += glfwGetTime();
         if ( currTime - lastTime >= 1.0 ){
@@ -201,30 +235,21 @@ glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
          nbFrames = 0;
          lastTime += 1.0;
      }
-        if(nbFrames<121){
-        nbFrames++;
-
-		angle += speed*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
-        y_angle += y_axis*glfwGetTime();
-        x_angle += x_axis*glfwGetTime();
-        z_pos += z_spd*glfwGetTime();
-        camera->move(glfwGetTime());
+        player->tick(timer);
+        timer = glfwGetTime();
+		angle += speed*timer; //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
+        y_angle += y_axis*timer;
+        x_angle += x_axis*timer;
+        z_pos += z_spd*timer;
+        camera->move(timer);
 		glfwSetTime(0); //Wyzeruj licznik czasu
-        alGetSourcei(source, AL_SOURCE_STATE, &state);
-
 		drawScene(window,angle, z_pos,y_angle,x_angle,fps); //Wykonaj procedurę rysującą
         glfwSetCursorPos(window,XWindowSize/2.0f, YWindowSize  /2.0f);
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
-    }else{
-        mySleep(1);
-    }
-	}
+}
 	freeProgram();
-    alDeleteSources(1, &source);
-    alDeleteBuffers(1, &buffer);
 	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
-
     alutExit();
 	exit(EXIT_SUCCESS);
 }

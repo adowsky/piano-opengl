@@ -29,6 +29,8 @@ Piano::Piano(ShaderProgram* shader){
 
     octavesCount = 3;
     activeOctave = 0;
+    lowestNote = 12*3;
+    highestNote = 12*3 + 12*octavesCount;
     //generateOctaves("samples/CAT0", "", "wav");
     generateOctaves("samples/KEPSREC0", "", "wav");
 }
@@ -154,7 +156,7 @@ void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFor
     }
     for(int i=0;i<12*octavesCount;++i){
 
-            string fileName = filePrefix + to_string(12*4+i) + fileSuffix + "." + fileFormat;
+            string fileName = filePrefix + to_string(12*3+i) + fileSuffix + "." + fileFormat;
             printf("Loading: %s",fileName.c_str());
             keyboard[i].buffer = alutCreateBufferFromFile(fileName.c_str());
             if(keyboard[i].buffer == AL_NONE){
@@ -220,6 +222,17 @@ void Piano::play(int keyNo){
         keyboard[activeOctave*12+keyNo].movState = MovementState::MOVING;
 
 }
+void Piano::play(int keyNo, float gain){
+    alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
+        if(keyboard[activeOctave*12+keyNo].state == AL_PLAYING){
+            alSourceStop(keyboard[activeOctave*12+keyNo].source);
+        }
+        alSourcef(keyboard[activeOctave*12+keyNo].source, AL_GAIN, gain);
+        alSourcePlay(keyboard[activeOctave*12+keyNo].source);
+        alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
+        keyboard[activeOctave*12+keyNo].movState = MovementState::MOVING;
+
+}
 
 void Piano::octaveUp(){
     if(activeOctave<octavesCount -1){
@@ -230,6 +243,12 @@ void Piano::octaveDown(){
     if (activeOctave>0){
         activeOctave--;
     }
+}
+int Piano::getHighestNote(){
+    return highestNote;
+}
+int Piano::getLowestNote(){
+    return lowestNote;
 }
 
 namespace PianoInternal {
