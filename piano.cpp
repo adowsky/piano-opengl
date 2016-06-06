@@ -30,7 +30,7 @@ Piano::Piano(ShaderProgram* shader){
     octavesCount = 5;
     activeOctave = 0;
     lowestNote = 12*3;
-    highestNote = 12*3 + 12*octavesCount;
+    highestNote = lowestNote + 12*octavesCount;
     //generateOctaves("samples/CAT0", "", "wav");
     generateOctaves("samples/KEPSREC0", "", "wav");
 }
@@ -75,7 +75,7 @@ void Piano::generateOctaves(string filePrefix, string fileSuffix, string fileFor
     Models::Dim3D zeroRotation;
     mainTranslate.x = -pianobox->getXmin()-1.5*rskey->getWidth();
     mainTranslate.y = 0;
-    mainTranslate.z = -pianobox->getLength()*0.63f;
+    mainTranslate.z = -pianobox->getLength()*0.66f;
     zeroRotation.x = zeroRotation.y = zeroRotation.z = 0;
     activeTranslateW = mainTranslate;
     activeTranslateB = mainTranslate;
@@ -190,11 +190,11 @@ void Piano::drawKeyboard(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 ligh
     }
 }
 
-void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light){
+void Piano::drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light, float timer){
     if(isOpening && openAngle>-maxAngle)
-        openAngle -= PI/2*glfwGetTime();
+        openAngle -= PI*timer;
     else if(!isOpening &&openAngle<0)
-        openAngle += PI/2*glfwGetTime();
+        openAngle += PI*timer;
 
     pianobox->drawModel(mP, mV, mM,light);
     glm::mat4 M = glm::translate(mM,glm::vec3(pianobox->getXmin(),pianobox->getYmax(),0));
@@ -212,27 +212,30 @@ void Piano::open(){
 void Piano::close(){
     isOpening = false;
 }
+void Piano::playAbsolute(int keyNo, float gain){
+    if(keyNo>12*octavesCount){
+        return;
+    }
+    alGetSourcei(keyboard[keyNo].source, AL_SOURCE_STATE, &keyboard[keyNo].state);
+    alSourcef(keyboard[keyNo].source, AL_GAIN, gain);
+        if(keyboard[keyNo].state == AL_PLAYING){
+            alSourceRewind(keyboard[keyNo].source);
+        }
+        alSourcePlay(keyboard[keyNo].source);
+        alGetSourcei(keyboard[keyNo].source, AL_SOURCE_STATE, &keyboard[keyNo].state);
+        keyboard[keyNo].movState = MovementState::MOVING;
+}
+
+void Piano::playAbsolute(int keyNo){
+    this->playAbsolute(keyNo, 0.4f);
+}
 
 void Piano::play(int keyNo){
-    alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
-        if(keyboard[activeOctave*12+keyNo].state == AL_PLAYING){
-            alSourceStop(keyboard[activeOctave*12+keyNo].source);
-        }
-        alSourcePlay(keyboard[activeOctave*12+keyNo].source);
-        alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
-        keyboard[activeOctave*12+keyNo].movState = MovementState::MOVING;
+    playAbsolute(activeOctave*12+keyNo);
 
 }
 void Piano::play(int keyNo, float gain){
-    alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
-        if(keyboard[activeOctave*12+keyNo].state == AL_PLAYING){
-            alSourceStop(keyboard[activeOctave*12+keyNo].source);
-        }
-        alSourcef(keyboard[activeOctave*12+keyNo].source, AL_GAIN, gain);
-        alSourcePlay(keyboard[activeOctave*12+keyNo].source);
-        alGetSourcei(keyboard[activeOctave*12+keyNo].source, AL_SOURCE_STATE, &keyboard[activeOctave*12+keyNo].state);
-        keyboard[activeOctave*12+keyNo].movState = MovementState::MOVING;
-
+    playAbsolute(activeOctave*12+keyNo, gain);
 }
 
 void Piano::octaveUp(){

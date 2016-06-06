@@ -1,4 +1,5 @@
 #define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -20,10 +21,12 @@
 #include <AL/alc.h>
 #include <AL/alut.h>
 #include "player.h"
+#include "textrenderer.h"
 #ifdef LINUX
 #include <unistd.h>
 #endif
-#ifdef WINDOWS
+#ifdef _WIN32
+#pragma warning(disable:4996)
 #include <windows.h>
 #endif
 
@@ -42,8 +45,8 @@ using namespace std;
  float y_axis;
  float x_axis;
  float z_spd;
- const int XWindowSize = 500;
- const int YWindowSize = 500;
+ const int XWindowSize = 800;
+ const int YWindowSize = 600;
  Camera* camera;
  Piano* piano;
  Scene* scene;
@@ -52,9 +55,13 @@ using namespace std;
  glm::vec4 light;
  ShaderProgram* shader;
  ShaderProgram* cube;
+ TextRenderer* textR;
  float fov = 50.0f;
  float nearPlaneDist = 1.0f;
-
+ std::string currPlayMsg = "Selected Song: ";
+ std::string loadingMsg = "Loading: ";
+ glm::mat4 P = glm::perspective(fov * PI / 180, XWindowSize / (float)YWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
+ glm::mat4 textP = glm::ortho(0.0f, XWindowSize*1.0f, 0.0f, YWindowSize*1.0f);
 
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
@@ -132,24 +139,37 @@ void free_list_of_midi_files(vector<char*>& v){
         delete[] c;
     }
 }
+void windowPrint(GLFWwindow* window, std::string msg) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	textR->renderText(msg, 0.0f, YWindowSize / 2, 0.4f, glm::vec3(1.0f, 1.0f, 1.0f), textP);
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     	glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     	glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
         glEnable(GL_MULTISAMPLE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     	glfwSetKeyCallback(window, key_callback);
-        glfwSetCursorPosCallback(window, mouse_move_callback);
-        glfwSetCursor(window,glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glHint(	GL_POLYGON_SMOOTH_HINT,GL_NICEST);
+		textR = new TextRenderer((char*)"opensans.ttf", XWindowSize, YWindowSize,48);
+		windowPrint(window,"Loading: shaders");
     cube = new ShaderProgram((char*)"sshaderv.txt",NULL,(char*)"sshaderf.frag");
     shader = new ShaderProgram((char*)"vshader.txt",NULL,(char*)"fshader.txt");
+	windowPrint(window, "Loading: Piano (model and audio)");
 	piano = new Piano(shader);
     camera = new Camera (0,0,-10.0f);
+	glfwSetCursorPosCallback(window, mouse_move_callback);
+	windowPrint(window, "Loading: Scene (model and images)");
     scene = new Scene(cube);
+	windowPrint(window, "Loading: Song Player");
     std::vector<char*> v;
     load_list_of_midi_files(v);
     player = new Player(v,piano);
-    free_list_of_midi_files(v);
+   // free_list_of_midi_files(v);
     light = glm::vec4(-5.0f,10.0f,10.0f,1.0f);
 }
 
@@ -160,18 +180,21 @@ void freeProgram(){
     delete camera;
     delete scene;
     delete player;
+	delete textR;
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float angle, float z_pos, float y_axis, float x_axis,float fps) {
+void drawScene(GLFWwindow* window, float fps, float timer) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 	glm::mat4 V =camera->getViewMatrix();
-    glm::mat4 P = glm::perspective(fov * PI / 180, YWindowSize/(float)XWindowSize, nearPlaneDist, 50.0f); //Wylicz macierz rzutowania
 	glm::mat4 M = glm::mat4(1.0f);
-    piano->drawObject(P, V, M,light);
-    scene->drawObject(P, V, M,light);
+    piano->drawObject(P, V, M,light, timer);
+	scene->drawObject(P, V, M,light);
+	std::string msg = currPlayMsg;
+	msg.append(player->getCurrentSong());
+	textR->renderText(msg, 0.0f,YWindowSize-(48*0.5f),0.4f,glm::vec3(0.0f, 0.0f, 0.0f), textP);
 	glfwSwapBuffers(window);
 }
 
@@ -187,7 +210,6 @@ int main(void)
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
-
 glfwWindowHint(GLFW_SAMPLES, 4);
 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API );
 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -236,14 +258,11 @@ glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
      }
         player->tick(timer);
         timer = glfwGetTime();
-		angle += speed*timer; //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
-        y_angle += y_axis*timer;
-        x_angle += x_axis*timer;
-        z_pos += z_spd*timer;
         camera->move(timer);
 		glfwSetTime(0); //Wyzeruj licznik czasu
-		drawScene(window,angle, z_pos,y_angle,x_angle,fps); //Wykonaj procedurę rysującą
-        glfwSetCursorPos(window,XWindowSize/2.0f, YWindowSize  /2.0f);
+		glfwSetCursorPos(window, XWindowSize / 2.0f, YWindowSize / 2.0f);
+		drawScene(window,fps,timer); //Wykonaj procedurę rysującą
+
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 }
 	freeProgram();

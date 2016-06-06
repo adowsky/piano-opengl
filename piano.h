@@ -46,9 +46,9 @@ class Piano{
     void generateOctaves(string filePrefix, string fileSuffix, string fileFormat);
     bool isOpening;
     float openAngle;
-    const float keyRotationSpeed = PI;
-    const float maxAngle = PI;
-    const float maxKeyAngle = 0.02f*PI;
+    const float keyRotationSpeed = 1.5*PI;
+    const float maxAngle = 0.7*PI;
+    const float maxKeyAngle = 0.03f*PI;
     void drawKeyboard(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light);
     GLuint loadTexture(char* loc);
 
@@ -56,10 +56,12 @@ public:
     Piano();
     Piano(ShaderProgram*);
     virtual ~Piano();
-    virtual void drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light);
+    virtual void drawObject(glm::mat4 mP, glm::mat4 mV, glm::mat4 mM,glm::vec4 light,float timer);
     float height();
     void open();
     void close();
+    void playAbsolute(int keyNo);
+    void playAbsolute(int keyNo, float gain);
     void play(int keyNo);
     void play(int keyNo, float gain);
     void octaveUp();
